@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"errors"
 	"flag"
 	"fmt"
 	"os"
@@ -14,18 +13,28 @@ import (
 var ERR_WTF = 1
 var ERR_NOF = 2
 var ERR_RTFM = 3
-
 var mdtext []string
 var progname = "fmt-md-text"
 
-func pprint(md string, lightMode *bool) {
+//func pprint(md string, lightMode *bool) {
+func pprint(f *os.File, lightMode *bool) {
 	var mode = "dark"
 	if *lightMode {
 		mode = "light"
 	}
-	out, err := glamour.Render(md, mode)
+
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		mdtext = append(mdtext, scanner.Text()+"\n")
+	}
+	if scanner.Err() != nil {
+		fmt.Printf("Something went wrong!\n%s\n", scanner.Err())
+		os.Exit(ERR_WTF)
+	}
+	out, err := glamour.Render(strings.Join(mdtext, ""), mode)
 	if err != nil {
 		fmt.Printf(err.Error())
+		os.Exit(ERR_WTF)
 	}
 	fmt.Print(out)
 }
@@ -49,14 +58,7 @@ func main() {
 	if fd1.Mode()&os.ModeCharDevice == 0 {
 		// from pipe
 		fmt.Printf("pipe\n")
-		scanner := bufio.NewScanner(os.Stdin)
-		for scanner.Scan() {
-			mdtext = append(mdtext, scanner.Text()+"\n")
-		}
-		if scanner.Err() != nil {
-			fmt.Printf("Something went wrong!\n%s\n", scanner.Err())
-			os.Exit(ERR_WTF)
-		}
+		pprint(os.Stdin, modeFlag)
 
 	} else {
 		// from file
@@ -65,26 +67,12 @@ func main() {
 			usage()
 			os.Exit(ERR_RTFM)
 		}
-		if _, err := os.Stat(*fromFile); errors.Is(err, os.ErrNotExist) {
-			fmt.Printf("No such file: %s\n", *fromFile)
-			os.Exit(ERR_NOF)
-		}
-
-		data, err := os.Open(*fromFile)
+		fi, err := os.Open(*fromFile)
 		if err != nil {
 			fmt.Printf("Something went wrong!\n%s\n", err)
 			os.Exit(3)
 		}
-		scanner := bufio.NewScanner(data)
-		for scanner.Scan() {
-			mdtext = append(mdtext, scanner.Text()+"\n")
-		}
-		if scanner.Err() != nil {
-			fmt.Printf("Something went wrong!\n%s\n", scanner.Err())
-			os.Exit(ERR_WTF)
-		}
-
+		pprint(fi, modeFlag)
 	}
 
-	pprint(strings.Join(mdtext, " "), modeFlag)
 }
