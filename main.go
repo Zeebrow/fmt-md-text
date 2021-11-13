@@ -10,11 +10,13 @@ import (
 	"github.com/charmbracelet/glamour"
 )
 
-var ERR_WTF = 1
-var ERR_NOF = 2
-var ERR_RTFM = 3
+// must be between 0-125 on uboontoo
+const ERR_WTF = 66
+const ERR_NOF = 69
+const ERR_RTFM = 42
+const progname = "fmt-md-text"
+
 var mdtext []string
-var progname = "fmt-md-text"
 
 //func pprint(md string, lightMode *bool) {
 func pprint(f *os.File, lightMode *bool) {
@@ -33,7 +35,7 @@ func pprint(f *os.File, lightMode *bool) {
 	}
 	out, err := glamour.Render(strings.Join(mdtext, ""), mode)
 	if err != nil {
-		fmt.Printf(err.Error())
+		fmt.Println(err.Error())
 		os.Exit(ERR_WTF)
 	}
 	fmt.Print(out)
@@ -62,7 +64,6 @@ func main() {
 	}
 	if fd1.Mode()&os.ModeCharDevice == 0 {
 		// from pipe
-		fmt.Printf("pipe\n")
 		pprint(os.Stdin, modeFlag)
 
 	} else {
@@ -75,7 +76,7 @@ func main() {
 		fi, err := os.Open(*fromFile)
 		if err != nil {
 			fmt.Printf("Something went wrong!\n%s\n", err)
-			os.Exit(3)
+			os.Exit(ERR_NOF)
 		}
 		pprint(fi, modeFlag)
 	}
