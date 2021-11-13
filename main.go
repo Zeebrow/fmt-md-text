@@ -45,10 +45,15 @@ func usage() {
 
 func main() {
 
+	var helpFlag = flag.Bool("h", false, "print usage")
 	var modeFlag = flag.Bool("l", false, "light mode (dark mode is default)")
 	var fromFile = flag.String("f", "", "from file filename")
 	flag.Parse()
 
+	if *helpFlag {
+		usage()
+		os.Exit(0)
+	}
 	// https://stackoverflow.com/a/43947435/14494128
 	fd1, err := os.Stdin.Stat()
 	if err != nil {
