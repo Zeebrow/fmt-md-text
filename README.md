@@ -20,3 +20,11 @@ git clone
 go build .
 ```
 
+## test
+
+You need to build the binary to run the tests.
+
+```bash
+go build .
+go test -v
+```
