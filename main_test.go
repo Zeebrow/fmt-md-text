@@ -36,8 +36,8 @@ func TestInputFromPipeLight(t *testing.T) {
 	var fd1 string = stdout.String()
 	var fd2 string = stderr.String()
 
-	// t.Logf("stdout: %v", fd1)
-	// t.Logf("stderr: %v", fd2)
+	t.Logf("stdout: %v", fd1)
+	t.Logf("stderr: %v", fd2)
 	if err != nil {
 		t.Errorf("Error should be nil for file piped to fmt-md-text (how in the world..?). \nstdout: %s\nsterr: %v", fd1, fd2)
 	}
@@ -68,8 +68,8 @@ func TestInputFromPipeDark(t *testing.T) {
 	var fd1 string = stdout.String()
 	var fd2 string = stderr.String()
 
-	// t.Logf("stdout: %v", fd1)
-	// t.Logf("stderr: %v", fd2)
+	t.Logf("stdout: %v", fd1)
+	t.Logf("stderr: %v", fd2)
 	if err != nil {
 		t.Errorf("Error should be nil for file piped to fmt-md-text (how in the world..?). \nstdout: %s\nsterr: %v", fd1, fd2)
 	}
@@ -101,8 +101,8 @@ func TestNoSuchFile(t *testing.T) {
 		t.Errorf("Got: %s", fd1)
 		t.Errorf("Expected: %s", expectedErrorMsg)
 	}
-	// t.Logf("stdout: %v", c.Stdout)
-	// t.Logf("stderr: %v", c.Stderr)
+	t.Logf("stdout: %v", c.Stdout)
+	t.Logf("stderr: %v", c.Stderr)
 	if err == nil {
 		t.Error(err)
 		t.Error("Error should not be nil for file that does not exist")
