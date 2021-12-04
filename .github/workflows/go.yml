@@ -23,6 +23,7 @@ jobs:
     - name: Test
       run: go build . && go test -v 
 
+  build-winders:
     runs-on: windows-latest
     steps:
     - name: test winders
