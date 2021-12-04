@@ -33,4 +33,4 @@ jobs:
       with:
         go-version: 1.17
     - name: test winders
-      run: ./build.sh 0.0.0 && mv dist/fmt-md-text-0.0.0.exe fmt-md-text && go test -v .
+      run: ./build.sh 0.0.0 && mv dist/fmt-md-text-0.0.0-x86_64.exe fmt-md-text && go test -v .
