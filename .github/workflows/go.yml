@@ -22,3 +22,8 @@ jobs:
 
     - name: Test
       run: go build . && go test -v 
+
+    runs-on: windows-latest
+    steps:
+    - name: test winders
+      run: ./build.sh 0.0.0 && mv dist/fmt-md-text-0.0.0.exe fmt-md-text && go test -v .

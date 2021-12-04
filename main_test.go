@@ -87,7 +87,6 @@ func TestInputFromPipeDark(t *testing.T) {
 
 }
 
-// @todo
 func TestNoSuchFile(t *testing.T) {
 	expectedErrorMsg := "open asdf: no such file or directory\n"
 	c := exec.Command("./fmt-md-text", "-f", "asdf")
@@ -104,9 +103,10 @@ func TestNoSuchFile(t *testing.T) {
 	}
 	// t.Logf("stdout: %v", c.Stdout)
 	// t.Logf("stderr: %v", c.Stderr)
-	//t.Error("TODO")
 	if err == nil {
 		t.Error(err)
 		t.Error("Error should not be nil for file that does not exist")
+		t.Errorf("stdout: %v\n", c.Stdout)
+		t.Errorf("stderr: %v\n", c.Stderr)
 	}
 }
