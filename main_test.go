@@ -88,22 +88,6 @@ func TestInputFromPipeDark(t *testing.T) {
 }
 
 // @todo
-func TestFileAsArg(t *testing.T) {
-	c := exec.Command("./fmt-md-text", "-f", "test-fixtures/example.md")
-	var stdout, stderr bytes.Buffer
-	c.Stdout = &stdout
-	c.Stderr = &stderr
-	err := c.Run()
-	// t.Logf("stdout: %v", c.Stdout)
-	// t.Logf("stderr: %v", c.Stderr)
-	//t.Error("TODO")
-	if err != nil {
-		t.Error(err)
-		t.Error("Errot should be nil for file that exists")
-	}
-}
-
-// @todo
 func TestNoSuchFile(t *testing.T) {
 	expectedErrorMsg := "open asdf: no such file or directory\n"
 	c := exec.Command("./fmt-md-text", "-f", "asdf")
