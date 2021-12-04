@@ -1,3 +1,6 @@
+//usr/bin/env go run "$0" "$@";
+//above is for lulz
+// you can ./main.go -f example.md and its kinda close enough
 package main
 
 import (
@@ -75,7 +78,7 @@ func main() {
 		}
 		fi, err := os.Open(*fromFile)
 		if err != nil {
-			fmt.Printf("Something went wrong!\n%s\n", err)
+			fmt.Printf("%s\n", err)
 			os.Exit(ERR_NOF)
 		}
 		pprint(fi, modeFlag)
