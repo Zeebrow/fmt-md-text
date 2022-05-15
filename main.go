@@ -62,7 +62,7 @@ func main() {
 	// https://stackoverflow.com/a/43947435/14494128
 	fd1, err := os.Stdin.Stat()
 	if err != nil {
-		fmt.Printf("Something went wrong!\n%s\n", err)
+		fmt.Printf("%s\n", err)
 		os.Exit(ERR_WTF)
 	}
 	if fd1.Mode()&os.ModeCharDevice == 0 {
@@ -70,7 +70,7 @@ func main() {
 		pprint(os.Stdin, modeFlag)
 
 	} else {
-		// from file
+		// from file path, passed with -f
 		if *fromFile == "" {
 			fmt.Printf("No file provided! %s\n", *fromFile)
 			usage()

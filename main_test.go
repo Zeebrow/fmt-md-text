@@ -16,7 +16,7 @@ func TestInputFromPipeLight(t *testing.T) {
 	// os independent way to grab exit code?
 	// https://stackoverflow.com/a/10385867/14494128
 
-	c := exec.Command("fmt-md-text", "-l")
+	c := exec.Command("./fmt-md-text", "-l")
 	var stdout, stderr bytes.Buffer
 	// var testText string = "asdfasdfsdf"
 	const testText string = "`mdcodelight`"
@@ -56,7 +56,7 @@ func TestInputFromPipeLight(t *testing.T) {
 }
 func TestInputFromPipeDark(t *testing.T) {
 
-	c := exec.Command("fmt-md-text")
+	c := exec.Command("./fmt-md-text")
 	var stdout, stderr bytes.Buffer
 	const testText string = "`mdcode`\n\n"
 
@@ -89,7 +89,7 @@ func TestInputFromPipeDark(t *testing.T) {
 
 func TestNoSuchFile(t *testing.T) {
 	expectedErrorMsg := "open asdf: no such file or directory\n"
-	c := exec.Command("fmt-md-text", "-f", "asdf")
+	c := exec.Command("./fmt-md-text", "-f", "asdf")
 
 	var stdout, stderr bytes.Buffer
 	c.Stdout = &stdout
