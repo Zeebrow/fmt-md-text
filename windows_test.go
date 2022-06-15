@@ -11,10 +11,13 @@ import (
 
 func TestNoSuchFileWindows(t *testing.T) {
 	if runtime.GOOS != "windows" {
+		t.SkipNow()
 		return
 	}
+	var b Executable
+	b.SetTestBinaryName()
 	expectedErrorMsg := "open asdf: The system cannot find the file specified."
-	c := exec.Command(GetTestBinaryName(), "-f", "asdf")
+	c := exec.Command(b.fullname, "-f", "asdf")
 
 	var stdout, stderr bytes.Buffer
 	c.Stdout = &stdout
