@@ -39,10 +39,21 @@ build:
 	" \
 		-o build/fmt-md-text .
 
-test: clean build 
+build-dev:
+	go install .
+	go build -ldflags "\
+		-X 'main.Version=$(GIT_HASH_LONG)' \
+		-X 'main.BuildDate=$(BUILD_DATE)' \
+	" \
+		-o build/fmt-md-text-$(GIT_HASH) .
+
+test-dev: clean build-dev
 	FMT_MD_TEXT_BINARY=build/fmt-md-text-$(GIT_HASH) go test -v .
 
-package-deb: build
+test: clean build 
+	FMT_MD_TEXT_BINARY=build/fmt-md-text go test -v .
+
+package-deb: test
 	mkdir -p dist/fmt-md-text/DEBIAN
 	mkdir -p dist/fmt-md-text$(DEB_INSTALL_DIR)
 	cp build/fmt-md-text dist/fmt-md-text$(DEB_INSTALL_DIR)/fmt-md-text
