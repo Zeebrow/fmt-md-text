@@ -17,6 +17,22 @@ func TestRunningAgainstValidBinary(t *testing.T) {
 	}
 }
 
+func TestVersionString(t *testing.T) {
+	var stdout, stderr bytes.Buffer
+	c := exec.Command(RunMe, "-version")
+	c.Stdout = &stdout
+	c.Stderr = &stderr
+	err := c.Run()
+	fd1 := fmt.Sprint(c.Stdout)
+
+	if err != nil {
+		t.Errorf("Unknown error\n")
+	}
+	if fd1 == "dev\n" && RunMe != "./fmt-md-text" {
+		t.Errorf("Version string (%s) should not be 'dev'\n", c.Stdout)
+	}
+}
+
 // const testOutputColorLightMode = "\033[38;5;203;48;5;254m"
 // const testBacktickOutputDarkMode = "\033[38;5;203;48;5;236m"
 

@@ -13,6 +13,8 @@ import (
 	"github.com/charmbracelet/glamour"
 )
 
+var Version = "dev"
+
 // must be between 0-125 on uboontoo
 const ERR_WTF = 66
 const ERR_NOF = 69
@@ -53,7 +55,13 @@ func main() {
 	var helpFlag = flag.Bool("h", false, "print usage")
 	var modeFlag = flag.Bool("l", false, "light mode (dark mode is default)")
 	var fromFile = flag.String("f", "", "from file filename")
+	var versionFlag = flag.Bool("version", false, "print version and exit")
 	flag.Parse()
+
+	if *versionFlag {
+		fmt.Println(Version)
+		os.Exit(0)
+	}
 
 	if *helpFlag {
 		usage()
