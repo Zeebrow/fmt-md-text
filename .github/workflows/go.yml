@@ -20,6 +20,9 @@ jobs:
     - name: Test
       run: go build -o fmt-md-text . && go test -v
 
+    - name: Install debian
+      run: make clean && make package-deb && sudo apt install ./build/*.deb && fmt-md-text -version
+
   build-windows:
     runs-on: windows-latest
     steps:
