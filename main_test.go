@@ -3,10 +3,19 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"os"
 	"os/exec"
 	"strings"
 	"testing"
 )
+
+var RunMe = "./" + os.Getenv("FMT_MD_TEXT_BINARY")
+
+func TestRunningAgainstValidBinary(t *testing.T) {
+	if os.Getenv("FMT_MD_TEXT_BINARY") == "" {
+		t.Error("FMT_MD_TEXT_BINARY environ is unset!")
+	}
+}
 
 // const testOutputColorLightMode = "\033[38;5;203;48;5;254m"
 // const testBacktickOutputDarkMode = "\033[38;5;203;48;5;236m"
@@ -16,7 +25,7 @@ func TestInputFromPipeLight(t *testing.T) {
 	// os independent way to grab exit code?
 	// https://stackoverflow.com/a/10385867/14494128
 
-	c := exec.Command("./fmt-md-text", "-l")
+	c := exec.Command(RunMe, "-l")
 	var stdout, stderr bytes.Buffer
 	// var testText string = "asdfasdfsdf"
 	const testText string = "`mdcodelight`"
@@ -56,7 +65,7 @@ func TestInputFromPipeLight(t *testing.T) {
 }
 func TestInputFromPipeDark(t *testing.T) {
 
-	c := exec.Command("./fmt-md-text")
+	c := exec.Command(RunMe)
 	var stdout, stderr bytes.Buffer
 	const testText string = "`mdcode`\n\n"
 
@@ -89,7 +98,7 @@ func TestInputFromPipeDark(t *testing.T) {
 
 func TestNoSuchFile(t *testing.T) {
 	expectedErrorMsg := "open asdf: no such file or directory\n"
-	c := exec.Command("./fmt-md-text", "-f", "asdf")
+	c := exec.Command(RunMe, "-f", "asdf")
 
 	var stdout, stderr bytes.Buffer
 	c.Stdout = &stdout

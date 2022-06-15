@@ -2,4 +2,6 @@ fmt-md-text
 dist/
 .vscode/
 testslul.sh
+**/*.swp
+build
 
