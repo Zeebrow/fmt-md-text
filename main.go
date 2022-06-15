@@ -9,11 +9,15 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 
 	"github.com/charmbracelet/glamour"
 )
 
 var Version = "dev"
+
+//var BuildDate = time.Now().Format("01-02-2006 15:04:05")
+var BuildDate = ""
 
 // must be between 0-125 on uboontoo
 const ERR_WTF = 66
@@ -59,7 +63,11 @@ func main() {
 	flag.Parse()
 
 	if *versionFlag {
-		fmt.Println(Version)
+		var dt = BuildDate
+		if BuildDate == "" {
+			dt = time.Now().Format("01-02-2006 15:04:05")
+		}
+		fmt.Printf("%s %s\n", Version, dt)
 		os.Exit(0)
 	}
 

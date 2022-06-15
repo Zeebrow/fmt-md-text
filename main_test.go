@@ -9,27 +9,34 @@ import (
 	"testing"
 )
 
-var RunMe = "./" + os.Getenv("FMT_MD_TEXT_BINARY")
-
-func TestRunningAgainstValidBinary(t *testing.T) {
-	if os.Getenv("FMT_MD_TEXT_BINARY") == "" {
-		t.Error("FMT_MD_TEXT_BINARY environ is unset!")
+func getTestBinaryName() string {
+	binName := os.Getenv("FMT_MD_TEXT_BINARY")
+	if binName == "" {
+		return "./fmt-md-text"
+	} else {
+		return fmt.Sprintf("./%s", binName)
 	}
 }
 
 func TestVersionString(t *testing.T) {
 	var stdout, stderr bytes.Buffer
-	c := exec.Command(RunMe, "-version")
+	c := exec.Command(getTestBinaryName(), "-version")
 	c.Stdout = &stdout
 	c.Stderr = &stderr
 	err := c.Run()
 	fd1 := fmt.Sprint(c.Stdout)
-
 	if err != nil {
 		t.Errorf("Unknown error\n")
 	}
-	if fd1 == "dev\n" && RunMe != "./fmt-md-text" {
-		t.Errorf("Version string (%s) should not be 'dev'\n", c.Stdout)
+	if getTestBinaryName() != "./fmt-md-text" {
+		if strings.HasPrefix(fd1, "dev") {
+			t.Errorf("builds compiled with `make` should not have a 'dev' version string (got %s)\n", fd1)
+		}
+	} else {
+		fmt.Println("got a quickone")
+		if !strings.HasPrefix(fd1, "dev ") {
+			t.Errorf("Expected 'dev' prefix to version string (string was '%s')\n", fd1)
+		}
 	}
 }
 
@@ -41,7 +48,7 @@ func TestInputFromPipeLight(t *testing.T) {
 	// os independent way to grab exit code?
 	// https://stackoverflow.com/a/10385867/14494128
 
-	c := exec.Command(RunMe, "-l")
+	c := exec.Command(getTestBinaryName(), "-l")
 	var stdout, stderr bytes.Buffer
 	// var testText string = "asdfasdfsdf"
 	const testText string = "`mdcodelight`"
@@ -80,8 +87,7 @@ func TestInputFromPipeLight(t *testing.T) {
 
 }
 func TestInputFromPipeDark(t *testing.T) {
-
-	c := exec.Command(RunMe)
+	c := exec.Command(getTestBinaryName())
 	var stdout, stderr bytes.Buffer
 	const testText string = "`mdcode`\n\n"
 
@@ -114,7 +120,7 @@ func TestInputFromPipeDark(t *testing.T) {
 
 func TestNoSuchFile(t *testing.T) {
 	expectedErrorMsg := "open asdf: no such file or directory\n"
-	c := exec.Command(RunMe, "-f", "asdf")
+	c := exec.Command(getTestBinaryName(), "-f", "asdf")
 
 	var stdout, stderr bytes.Buffer
 	c.Stdout = &stdout

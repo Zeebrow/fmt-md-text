@@ -1,5 +1,6 @@
 GIT_HASH := $(shell git rev-parse --short HEAD)
 GIT_HASH_LONG := $(shell git rev-parse HEAD)
+BUILD_DATE := $(date -I)
 GOARCH := amd64 #amd64, 386, arm, ppc64
 GOOS := linux #linux, darwin, windows, netbsd
 
@@ -25,8 +26,10 @@ install-zeebrow:
 
 build:
 	go install .
-	go build \
-		-ldflags "-X 'main.Version=$(GIT_HASH_LONG)'" \
+	go build -ldflags "\
+		-X 'main.Version=$(GIT_HASH_LONG)' \
+		-X 'main.BuildDate=$(BUILD_DATE)' \
+	" \
 		-o build/fmt-md-text-$(GIT_HASH) .
 
 test:
