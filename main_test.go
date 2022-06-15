@@ -9,18 +9,19 @@ import (
 	"testing"
 )
 
-func getTestBinaryName() string {
+func GetTestBinaryName() string {
 	binName := os.Getenv("FMT_MD_TEXT_BINARY")
 	if binName == "" {
-		return "./fmt-md-text"
+		return ".\\fmt-md-text"
 	} else {
-		return fmt.Sprintf("./%s", binName)
+		return fmt.Sprintf("%s", binName)
 	}
 }
 
 func TestVersionString(t *testing.T) {
 	var stdout, stderr bytes.Buffer
-	c := exec.Command(getTestBinaryName(), "-version")
+	fmt.Println("bin name: ", GetTestBinaryName())
+	c := exec.Command(GetTestBinaryName(), "-version")
 	c.Stdout = &stdout
 	c.Stderr = &stderr
 	err := c.Run()
@@ -28,7 +29,7 @@ func TestVersionString(t *testing.T) {
 	if err != nil {
 		t.Errorf("Unknown error\n")
 	}
-	if getTestBinaryName() != "./fmt-md-text" {
+	if GetTestBinaryName() != ".\\fmt-md-text" {
 		if strings.HasPrefix(fd1, "dev") {
 			t.Errorf("builds compiled with `make` should not have a 'dev' version string (got %s)\n", fd1)
 		}
@@ -48,7 +49,7 @@ func TestInputFromPipeLight(t *testing.T) {
 	// os independent way to grab exit code?
 	// https://stackoverflow.com/a/10385867/14494128
 
-	c := exec.Command(getTestBinaryName(), "-l")
+	c := exec.Command(GetTestBinaryName(), "-l")
 	var stdout, stderr bytes.Buffer
 	// var testText string = "asdfasdfsdf"
 	const testText string = "`mdcodelight`"
@@ -87,7 +88,7 @@ func TestInputFromPipeLight(t *testing.T) {
 
 }
 func TestInputFromPipeDark(t *testing.T) {
-	c := exec.Command(getTestBinaryName())
+	c := exec.Command(GetTestBinaryName())
 	var stdout, stderr bytes.Buffer
 	const testText string = "`mdcode`\n\n"
 
@@ -116,28 +117,4 @@ func TestInputFromPipeDark(t *testing.T) {
 		t.Error("Colored output is never reset")
 	}
 
-}
-
-func TestNoSuchFile(t *testing.T) {
-	expectedErrorMsg := "open asdf: no such file or directory\n"
-	c := exec.Command(getTestBinaryName(), "-f", "asdf")
-
-	var stdout, stderr bytes.Buffer
-	c.Stdout = &stdout
-	c.Stderr = &stderr
-	err := c.Run()
-	fd1 := fmt.Sprint(c.Stdout)
-	if fd1 != expectedErrorMsg {
-		t.Error("stdout message does not match expceted response.")
-		t.Errorf("Got: %s", fd1)
-		t.Errorf("Expected: %s", expectedErrorMsg)
-	}
-	t.Logf("stdout: %v", c.Stdout)
-	t.Logf("stderr: %v", c.Stderr)
-	if err == nil {
-		t.Error(err)
-		t.Error("Error should not be nil for file that does not exist")
-		t.Errorf("stdout: %v\n", c.Stdout)
-		t.Errorf("stderr: %v\n", c.Stderr)
-	}
 }
