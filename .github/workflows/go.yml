@@ -21,7 +21,7 @@ jobs:
       run: make build-linux-amd64
 
     - name: Test
-      run: make test
+      run: make test-linux-amd64  
 
   build-windows:
     runs-on: windows-latest

@@ -34,8 +34,10 @@ build:
 	" \
 		-o build/fmt-md-text-$(GIT_HASH) .
 
+test-linux-amd64:
+	FMT_MD_TEXT_BINARY=build/fmt-md-text-$(GIT_HASH)-$(GOOS)-$(GOARCH) go test -v .
+
 test: 
-	#FMT_MD_TEXT_BINARY=build/fmt-md-text-$(GIT_HASH)-$(GOOS)-$(GOARCH) go test -v .
 	FMT_MD_TEXT_BINARY=build/fmt-md-text-$(GIT_HASH) go test -v .
       
 clean:
