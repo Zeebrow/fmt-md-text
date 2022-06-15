@@ -5,22 +5,56 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"runtime"
 	"strings"
 	"testing"
 )
 
-func GetTestBinaryName() string {
+type Executable struct {
+	prefix string
+	name   string
+}
+
+func (e *Executable) SetTestBinaryName() {
+	switch runtime.GOOS {
+	case "windows":
+		e.prefix = ".\\"
+	case "linux":
+		e.prefix = "./"
+	default:
+		fmt.Printf("Unsupported platform: %s\n", runtime.GOOS)
+		os.Exit(1)
+	}
 	binName := os.Getenv("FMT_MD_TEXT_BINARY")
 	if binName == "" {
-		return ".\\fmt-md-text"
+		e.name = "fmt-md-text"
 	} else {
-		return fmt.Sprintf("%s", binName)
+		e.name = binName
+	}
+	return
+}
+
+func GetTestBinaryName() string {
+	executePrefixThingy := ""
+	switch runtime.GOOS {
+	case "windows":
+		executePrefixThingy = ".\\"
+	case "linux":
+		executePrefixThingy = "./"
+	default:
+		fmt.Printf("Unsupported platform: %s\n", runtime.GOOS)
+		os.Exit(1)
+	}
+	binName := os.Getenv("FMT_MD_TEXT_BINARY")
+	if binName == "" {
+		return fmt.Sprintf("%s%s", executePrefixThingy, "fmt-md-text")
+	} else {
+		return fmt.Sprintf("%s%s", executePrefixThingy, binName)
 	}
 }
 
 func TestVersionString(t *testing.T) {
 	var stdout, stderr bytes.Buffer
-	fmt.Println("bin name: ", GetTestBinaryName())
 	c := exec.Command(GetTestBinaryName(), "-version")
 	c.Stdout = &stdout
 	c.Stderr = &stderr
@@ -29,7 +63,7 @@ func TestVersionString(t *testing.T) {
 	if err != nil {
 		t.Errorf("Unknown error\n")
 	}
-	if GetTestBinaryName() != ".\\fmt-md-text" {
+	if GetTestBinaryName() != "./fmt-md-text" {
 		if strings.HasPrefix(fd1, "dev") {
 			t.Errorf("builds compiled with `make` should not have a 'dev' version string (got %s)\n", fd1)
 		}
@@ -117,4 +151,28 @@ func TestInputFromPipeDark(t *testing.T) {
 		t.Error("Colored output is never reset")
 	}
 
+}
+
+func TestNoSuchFile(t *testing.T) {
+	expectedErrorMsg := "open asdf: no such file or directory\n"
+	c := exec.Command(GetTestBinaryName(), "-f", "asdf")
+
+	var stdout, stderr bytes.Buffer
+	c.Stdout = &stdout
+	c.Stderr = &stderr
+	err := c.Run()
+	fd1 := fmt.Sprint(c.Stdout)
+	if fd1 != expectedErrorMsg {
+		t.Error("stdout message does not match expceted response.")
+		t.Errorf("Got: %s", fd1)
+		t.Errorf("Expected: %s", expectedErrorMsg)
+	}
+	t.Logf("stdout: %v", c.Stdout)
+	t.Logf("stderr: %v", c.Stderr)
+	if err == nil {
+		t.Error(err)
+		t.Error("Error should not be nil for file that does not exist")
+		t.Errorf("stdout: %v\n", c.Stdout)
+		t.Errorf("stderr: %v\n", c.Stderr)
+	}
 }
