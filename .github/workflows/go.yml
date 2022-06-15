@@ -17,11 +17,8 @@ jobs:
       with:
         go-version: 1.18
 
-    - name: Build
-      run: make build-linux-amd64
-
     - name: Test
-      run: make test-linux-amd64  
+      run: go build -o fmt-md-text . && go test -v
 
   build-windows:
     runs-on: windows-latest
@@ -34,4 +31,4 @@ jobs:
         go-version: 1.18
 
     - name: Test Windows
-      run: go build -o fmt-md-text . && go test -v
+      run: go build -o fmt-md-text.exe . && go test -v

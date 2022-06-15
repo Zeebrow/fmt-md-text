@@ -5,4 +5,5 @@ dist/
 testslul.sh
 **/*.swp
 build
+Makefile
 
