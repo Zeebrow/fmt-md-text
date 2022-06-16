@@ -7,4 +7,5 @@ testslul.sh
 build
 dist
 Makefile
+release.sh
 

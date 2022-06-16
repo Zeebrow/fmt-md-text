@@ -5,7 +5,7 @@ Written in Go with [glamour](https://github.com/charmbracelet/glamour).
 
 ## example usage
 
-Don't run as root.
+Be careful running as root!
 
 ```bash
 fmt-md-text [-f md-filename] [-l]

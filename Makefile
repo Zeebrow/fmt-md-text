@@ -11,7 +11,7 @@ Version: 0.1
 Provides: fmt-md-text
 Section: custom
 Priority: optional
-Architecture: amd64
+Architecture: $(GOARCH)
 Essential: no
 Installed-Size: 8192
 Maintainer: zeebrow
@@ -53,6 +53,10 @@ test-dev: clean build-dev
 test: clean build 
 	FMT_MD_TEXT_BINARY=build/fmt-md-text go test -v .
 
+
+package-tar:
+	tar -czf fmt-md-text-$(GIT_HASH).tar.gz *.go go.mod go.sum README.md Makefile
+
 package-deb: test
 	mkdir -p dist/fmt-md-text/DEBIAN
 	mkdir -p dist/fmt-md-text$(DEB_INSTALL_DIR)
@@ -61,6 +65,28 @@ package-deb: test
 	echo "$$DEBIAN_CONTROL" > dist/fmt-md-text/DEBIAN/control
 	dpkg-deb --build dist/fmt-md-text
 	cp dist/*.deb build/
+
+build-release:
+	go install .
+	go build -ldflags "\
+		-X 'main.Version=$(GIT_HASH_LONG)' \
+		-X 'main.BuildDate=$(BUILD_DATE)' \
+	" \
+		-o build/fmt-md-text-$(GIT_HASH) .
+
+release:
+ifeq ($(strip $(VERSION)),)
+	@echo set VERSION and try again
+else
+	@echo Relase version '$(VERSION)'
+	@echo $(shell echo $(VERSION) | grep 'v\d\.d\.\d')
+endif
+
+uhhh:
+ifeq ($(VERSION),undefined)
+	VERSION = $(GIT_HASH)
+endif
+	@echo $(VERSION)
       
 clean:
 	rm -rf dist/
