@@ -19,6 +19,8 @@ fmt-md-text -f README.md | less -R
 
 `NICE TO HAVE:` detect content length exceeding terminal height and drop to `$PAGER`
 
+`NICE TO HAVE:` `-h` (or some option) gives markdown formatting guide
+
 ## build
 
 ```bash

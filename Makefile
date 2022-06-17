@@ -1,14 +1,14 @@
 PROG_NAME := drcat
 GIT_HASH := $(shell git rev-parse --short HEAD)
 GIT_HASH_LONG := $(shell git rev-parse HEAD)
-BUILD_DATE := $(date -I)
+BUILD_DATE := $(shell date -I)
 GOARCH := amd64#amd64, 386, arm, ppc64
 GOOS := linux#linux, darwin, windows, netbsd
 
 DEB_INSTALL_DIR := /usr/bin
 define DEBIAN_CONTROL =
 Package: $(PROG_NAME)
-Version: 0.1
+Version: 0.2
 Provides: $(PROG_NAME)
 Section: custom
 Priority: optional
@@ -25,8 +25,10 @@ install-zeebrow:
 	go install .
 	go build \
 		-ldflags "\
-		-X 'main.Version=$(GIT_HASH_LONG)'\
-		-X 'main.BuildDate=$(BUILD_DATE)'
+		-X 'main.ProgramName=$(PROG_NAME)' \
+		-X 'main.CommitHash=$(GIT_HASH_LONG)' \
+		-X 'main.Version=$(GIT_HASH)' \
+		-X 'main.BuildDate=$(BUILD_DATE)' \
 		" \
 		-o $(PROG_NAME) .
 	FMT_MD_TEXT_BINARY=$(PROG_NAME) go test -v .
@@ -35,7 +37,9 @@ install-zeebrow:
 build:
 	go install .
 	go build -ldflags "\
-		-X 'main.Version=$(GIT_HASH_LONG)' \
+		-X 'main.ProgramName=$(PROG_NAME)' \
+		-X 'main.CommitHash=$(GIT_HASH_LONG)' \
+		-X 'main.Version=$(GIT_HASH)' \
 		-X 'main.BuildDate=$(BUILD_DATE)' \
 	" \
 		-o build/$(PROG_NAME) .
@@ -43,7 +47,9 @@ build:
 build-dev:
 	go install .
 	go build -ldflags "\
-		-X 'main.Version=$(GIT_HASH_LONG)' \
+		-X 'main.ProgramName=$(PROG_NAME)' \
+		-X 'main.CommitHash=$(GIT_HASH_LONG)' \
+		-X 'main.Version=$(GIT_HASH)' \
 		-X 'main.BuildDate=$(BUILD_DATE)' \
 	" \
 		-o build/$(PROG_NAME)-$(GIT_HASH) .
@@ -62,6 +68,11 @@ package-deb: test
 	echo "$$DEBIAN_CONTROL" > dist/$(PROG_NAME)/DEBIAN/control
 	dpkg-deb --build dist/$(PROG_NAME)
 	cp dist/*.deb build/
+
+remove-deb:
+	sudo apt -y remove $(PROG_NAME) 
+reinstall-deb: clean remove-deb package-deb
+	sudo apt install ./build/$(PROG_NAME).deb
 
 clean:
 	rm -rf dist/

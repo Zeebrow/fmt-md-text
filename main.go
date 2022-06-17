@@ -14,16 +14,34 @@ import (
 	"github.com/charmbracelet/glamour"
 )
 
+type ProgramInfo struct {
+	progName   string
+	version    string
+	buildDate  string
+	commitHash string
+}
+
+func (pi *ProgramInfo) show() {
+	fmt.Printf("%s version %s (%s) built on %s\n", pi.progName, pi.version, pi.commitHash, pi.buildDate)
+}
+
+var ProgramName = "fmt-md-text"
 var Version = "dev"
 
 //var BuildDate = time.Now().Format("01-02-2006 15:04:05")
 var BuildDate = ""
+var CommitHash = ""
+var ProgInfo = ProgramInfo{
+	progName:   ProgramName,
+	version:    Version,
+	buildDate:  BuildDate,
+	commitHash: CommitHash,
+}
 
 // must be between 0-125 on uboontoo
 const ERR_WTF = 66
 const ERR_NOF = 69
 const ERR_RTFM = 42
-const progname = "fmt-md-text"
 
 var mdtext []string
 
@@ -51,7 +69,7 @@ func pprint(f *os.File, lightMode *bool) {
 }
 
 func usage() {
-	fmt.Printf("usage: %s [-l] [-f FILE.md]\n", progname)
+	fmt.Printf("usage: %s [-l] [-f FILE.md]\n", ProgInfo.progName)
 }
 
 func main() {
@@ -72,6 +90,7 @@ func main() {
 	}
 
 	if *helpFlag {
+		ProgInfo.show()
 		usage()
 		os.Exit(0)
 	}
