@@ -36,7 +36,7 @@ jobs:
         drcat -version
     - name: Upload
       run: |
-        aws s3 cp ./build/drcat.deb "s3://github-artifacts-zeebrow/drcat/latest-devel/linux/amd64/"
+        aws s3 cp ./build/*.deb "s3://github-artifacts-zeebrow/drcat/dist/debian/amd64/"
         aws s3 cp "./build/drcat/linux/amd64/*" "s3://github-artifacts-zeebrow/drcat/latest-devel/linux/amd64/"
 
   build-windows:
