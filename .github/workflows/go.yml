@@ -2,7 +2,8 @@ name: Go
 
 on:
   push:
-    branches: [ master ]
+    branches:
+      - 'release/**'
 
 env:
   PROG_NAME: drcat

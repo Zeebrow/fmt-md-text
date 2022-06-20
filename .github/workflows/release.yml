@@ -4,8 +4,6 @@ on:
   push:
     tags:
       - rc-**
-    branches:
-      - master
 
 env:
   PROG_NAME: drcat
