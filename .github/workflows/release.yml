@@ -71,7 +71,7 @@ jobs:
         make package-deb 
         sudo apt -y install ./build/*.deb 
         drcat -version
-        sudo apt remove -y drcar
+        sudo apt remove -y drcat
 
     - name: Build .deb release
       run : make VERSION="$RELEASE_VERSION" release-deb
