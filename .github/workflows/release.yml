@@ -1,0 +1,87 @@
+name: release
+
+on:
+  push:
+    tags:
+      - rc-**
+    branches:
+      - master
+
+env:
+  PROG_NAME: drcat
+  AWS_S3_UPLOAD_SESSION: gh-action-session-drcat
+  AWS_S3_UPLOAD_REGION: us-east-1
+  AWS_S3_UPLOAD_ROLE_ARN: arn:aws:iam::188154480716:role/ghactions-drcat-s3-upload
+
+jobs:
+  build-linux-amd64:
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.18
+#    - name: Configure AWS credentials
+#      uses: aws-actions/configure-aws-credentials@v1
+#      with:
+#        aws-region: ${{ env.AWS_S3_UPLOAD_REGION }}
+#        role-to-assume: ${{ env.AWS_S3_UPLOAD_ROLE_ARN }}
+#        role-session-name: ${{ env.AWS_S3_UPLOAD_SESSION }}
+#    - name: Build
+#      run : make build
+#    - name: Install debian
+#      run: |
+#        make clean 
+#        make package-deb 
+#        sudo apt install ./build/*.deb 
+#        drcat -version
+    - name: Create release branch
+      run: |
+        BRANCH=$(git branch --show-current)
+        GIT_HASH=$(git rev-parse --short HEAD)
+        GIT_HASH_LONG=$(git rev-parse HEAD)
+        BUILD_DATE=$(date -I)
+        BRANCH_TYPE=${BRANCH%%/*} #master,release
+        VERSION=
+
+        debug(){
+        echo "$BRANCH"
+        echo ""
+        echo "$GIT_HASH"
+        echo "$GIT_HASH_LONG"
+        echo "$BUILD_DATE"
+        echo "$VERSION"
+        echo ""
+        }
+
+        get_version(){
+        if [ "$BRANCH" == "master" ]; then
+          BRANCH_TYPE=dev
+          VERSION="$GIT_HASH-dev"
+        elif [ "${BRANCH%%/*}" == 'release' ]; then
+          VERSION="${BRANCH##*/}"
+        else
+          return 1
+        fi
+        printf "%s" "$VERSION"
+        return 0
+        }
+        debug
+        get_version
+
+    - name: Get release number
+      run: |
+        echo "${}"
+
+#    - name: Upload
+#      run: |
+#        aws s3 cp ./build/*.deb "s3://github-artifacts-zeebrow/drcat/dist/debian/amd64/"
+#        aws s3 cp "./build/${{ env.PROG_NAME }}" "s3://github-artifacts-zeebrow/drcat/latest-devel/linux/amd64/"
+
+
+
+
