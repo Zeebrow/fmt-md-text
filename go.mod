@@ -1,4 +1,4 @@
-module fmt-md-text
+module drcat
 
 go 1.17
 

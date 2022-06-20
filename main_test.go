@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
-	"path"
+	"path/filepath"
 	"runtime"
 	"strings"
 	"testing"
@@ -34,7 +34,7 @@ func (e *Executable) SetTestBinaryName() {
 		os.Exit(1)
 	}
 	pathToBinary := os.Getenv("DRCAT_BINARY_DIR")
-	e.fullname = e.prefix + path.Join(pathToBinary, e.name, e.suffix)
+	e.fullname = e.prefix + filepath.Join(pathToBinary, e.name, e.suffix)
 	fmt.Println("====> binary: " + e.fullname)
 	return
 }
