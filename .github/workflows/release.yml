@@ -64,10 +64,9 @@ jobs:
         elif [ "${BRANCH%%/*}" == 'release' ]; then
           VERSION="${BRANCH##*/}"
         else
-          return 1
+          :
         fi
         printf "%s" "$VERSION"
-        return 0
         debug
 
     - name: Get release number
