@@ -9,7 +9,6 @@ import (
 	"fmt"
 	"os"
 	"strings"
-	"time"
 
 	"github.com/charmbracelet/glamour"
 )
@@ -22,13 +21,11 @@ type ProgramInfo struct {
 }
 
 func (pi *ProgramInfo) show() {
-	fmt.Printf("%s version %s (%s) built on %s\n", pi.progName, pi.version, pi.commitHash, pi.buildDate)
+	fmt.Printf("%s version '%s' (%s) built on '%s'\n", pi.progName, pi.version, pi.commitHash, pi.buildDate)
 }
 
-var ProgramName = "fmt-md-text"
+var ProgramName = "drcat"
 var Version = "dev"
-
-//var BuildDate = time.Now().Format("01-02-2006 15:04:05")
 var BuildDate = ""
 var CommitHash = ""
 var ProgInfo = ProgramInfo{
@@ -81,16 +78,11 @@ func main() {
 	flag.Parse()
 
 	if *versionFlag {
-		var dt = BuildDate
-		if BuildDate == "" {
-			dt = time.Now().Format("01-02-2006 15:04:05")
-		}
-		fmt.Printf("%s %s\n", Version, dt)
+		ProgInfo.show()
 		os.Exit(0)
 	}
 
 	if *helpFlag {
-		ProgInfo.show()
 		usage()
 		os.Exit(0)
 	}

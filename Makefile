@@ -30,7 +30,7 @@ build:
 		-X 'main.BuildDate=$(BUILD_DATE)' \
 		" \
 		-o build/$(PROG_NAME) .
-	PROG_BINARY=build/$(PROG_NAME) go test -v
+	DRCAT_BINARY_DIR=build go test -v
 
 build-windows:
 	go install .
@@ -41,7 +41,7 @@ build-windows:
 		-X 'main.BuildDate=$(BUILD_DATE)' \
 		" \
 		-o build/$(PROG_NAME).exe .
-	PROG_BINARY=build/$(PROG_NAME).exe go test -v
+	DRCAT_BINARY_DIR=build go test -v
 
 package-deb: build
 	mkdir -p dist/$(PROG_NAME)/DEBIAN

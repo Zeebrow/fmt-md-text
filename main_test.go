@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path"
 	"runtime"
 	"strings"
 	"testing"
@@ -20,6 +21,7 @@ type Executable struct {
 }
 
 func (e *Executable) SetTestBinaryName() {
+	e.name = ProgInfo.progName
 	switch runtime.GOOS {
 	case "windows":
 		e.prefix = ".\\"
@@ -31,14 +33,9 @@ func (e *Executable) SetTestBinaryName() {
 		fmt.Printf("Unsupported platform: %s\n", runtime.GOOS)
 		os.Exit(1)
 	}
-	binName := os.Getenv("PROG_BINARY")
-	if binName == "" {
-		fmt.Println("PROG_BINARY env is unset")
-		os.Exit(1)
-	} else {
-		e.name = binName
-	}
-	e.fullname = e.prefix + e.name + e.suffix
+	pathToBinary := os.Getenv("DRCAT_BINARY_DIR")
+	e.fullname = e.prefix + path.Join(pathToBinary, e.name, e.suffix)
+	fmt.Println("====> binary: " + e.fullname)
 	return
 }
 
@@ -55,15 +52,6 @@ func TestVersionString(t *testing.T) {
 		t.Errorf("Unknown error\n")
 	}
 	t.Logf("Output: %s\n", fd1)
-	if b.name != PROG_NAME {
-		if strings.HasPrefix(fd1, "dev") {
-			t.Errorf("builds compiled with `make` should not have a 'dev' version string (got %s)\n", fd1)
-		}
-	} else {
-		if !strings.HasPrefix(fd1, "dev ") {
-			t.Errorf("Expected 'dev' prefix to version string (string was '%s')\n", fd1)
-		}
-	}
 }
 
 // const testOutputColorLightMode = "\033[38;5;203;48;5;254m"
@@ -98,7 +86,7 @@ func TestInputFromPipeLight(t *testing.T) {
 	t.Logf("stdout: %v", fd1)
 	t.Logf("stderr: %v", fd2)
 	if err != nil {
-		t.Errorf("Error should be nil for file piped to fmt-md-text (how in the world..?). \nstdout: %s\nsterr: %v", fd1, fd2)
+		t.Errorf("Error should be nil for file piped to %s (how in the world..?). \nstdout: %s\nsterr: %v", ProgInfo.progName, fd1, fd2)
 	}
 
 	if !(strings.Contains(fd1, "\033[38;5;203;48;5;254m")) {
@@ -131,7 +119,7 @@ func TestInputFromPipeDark(t *testing.T) {
 	t.Logf("stdout: %v", fd1)
 	t.Logf("stderr: %v", fd2)
 	if err != nil {
-		t.Errorf("Error should be nil for file piped to fmt-md-text (how in the world..?). \nstdout: %s\nsterr: %v", fd1, fd2)
+		t.Errorf("Error should be nil for file piped to %s (how in the world..?). \nstdout: %s\nsterr: %v", ProgInfo.progName, fd1, fd2)
 	}
 
 	if !(strings.Contains(fd1, "\033[38;5;203;48;5;236m")) {
