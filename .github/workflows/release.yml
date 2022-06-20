@@ -49,12 +49,12 @@ jobs:
         VERSION=
 
         debug(){
-        echo "$BRANCH"
+        echo "BRANCH: $BRANCH"
         echo ""
-        echo "$GIT_HASH"
-        echo "$GIT_HASH_LONG"
-        echo "$BUILD_DATE"
-        echo "$VERSION"
+        echo "GIT_HASH: $GIT_HASH"
+        echo "GIT_HASH_LONG: $GIT_HASH_LONG"
+        echo "BUILD_DATE: $BUILD_DATE"
+        echo "VERSION: $VERSION"
         echo ""
         }
 
@@ -74,8 +74,7 @@ jobs:
         get_version
 
     - name: Get release number
-      run: |
-        echo "${}"
+      run: ./build.sh get_version
 
 #    - name: Upload
 #      run: |
