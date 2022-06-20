@@ -58,25 +58,28 @@ jobs:
       run: |
         export RELEASE_VERSION=$(./build.sh get_version)
         echo "$RELEASE_VERSION"
-#
-#    - name: Configure AWS credentials
-#      uses: aws-actions/configure-aws-credentials@v1
-#      with:
-#        aws-region: ${{ env.AWS_S3_UPLOAD_REGION }}
-#        role-to-assume: ${{ env.AWS_S3_UPLOAD_ROLE_ARN }}
-#        role-session-name: ${{ env.AWS_S3_UPLOAD_SESSION }}
-#    - name: Build
-#      run : make build
-#    - name: Install debian
-#      run: |
-#        make clean 
-#        make VERSION="$RELEASE_VERSION" package-deb 
-#        sudo apt install ./build/*.deb 
-#        drcat -version
-#    - name: Upload
-#      run: |
-#        aws s3 cp ./build/*.deb "s3://github-artifacts-zeebrow/drcat/dist/debian/amd64/"
-#        aws s3 cp "./build/${{ env.PROG_NAME }}" "s3://github-artifacts-zeebrow/drcat/latest-devel/linux/amd64/"
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-region: ${{ env.AWS_S3_UPLOAD_REGION }}
+        role-to-assume: ${{ env.AWS_S3_UPLOAD_ROLE_ARN }}
+        role-session-name: ${{ env.AWS_S3_UPLOAD_SESSION }}
+    - name: Install debian
+      run: |
+        make clean 
+        make package-deb 
+        sudo apt -y install ./build/*.deb 
+        drcat -version
+        sudo apt remove -y drcar
+
+    - name: Build .deb release
+      run : make VERSION="$RELEASE_VERSION" release-deb
+
+    - name: Upload artifact
+      run: |
+        aws s3 cp ./build/*.deb "s3://github-artifacts-zeebrow/drcat/releases/debian/v$RELEASE_VERSION/amd64/"
+        aws s3 cp "./build/${{ env.PROG_NAME }}" "s3://github-artifacts-zeebrow/drcat/releases/binaries/v$RELEASE_VERSION/linux/amd64/"
 
 
 
