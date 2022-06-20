@@ -8,4 +8,7 @@ build
 dist
 Makefile
 release.sh
+doc
+site
+tmp
 
