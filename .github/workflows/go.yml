@@ -4,51 +4,42 @@ on:
   push:
     branches: [ master ]
 
-env:
-  PROG_NAME: drcat
-
 jobs:
 
   build-linux-amd64:
-#    permissions:
-#      id-token: write
-#      contents: read
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
     steps:
     - uses: actions/checkout@v2
-
     - name: Set up Go
       uses: actions/setup-go@v2
       with:
         go-version: 1.18
-
     - name: Test
-      run: go test -v && go build -o "$PROG_NAME" .
-
+      run: go test -v && go build -o drcat .
     - name: Install debian
-      run: make clean && make package-deb && sudo apt install ./build/*.deb && "$PROG_NAME" -version
-
-#    - name: Upload
-#      run: |
-#        aws s3 cp ./build/define.deb "s3://github-artifacts-zeebrow/define/latest-devel/$GOOS/$GOARCH/"
-#        aws s3 cp "./build/$GOOS/$GOARCH/define-$GOOS-$GOARCH" "s3://github-artifacts-zeebrow/define/latest-devel/$GOOS/$GOARCH/"
+      run: make clean && make package-deb && sudo apt install ./build/*.deb && drcat -version
+    - name: Upload
+      run: |
+        aws s3 cp ./build/drcat.deb "s3://github-artifacts-zeebrow/define/latest-devel/linux/amd64/"
+        aws s3 cp "./build/drcat/linux/amd64/*" "s3://github-artifacts-zeebrow/drcat/latest-devel/linux/amd64/"
 
 
   build-windows:
     runs-on: windows-latest
-#    permissions:
-#      id-token: write
-#      contents: read
+    permissions:
+      id-token: write
+      contents: read
     steps:
     - uses: actions/checkout@v2
     - name: Set up Go
       uses: actions/setup-go@v2
       with:
         go-version: 1.18
-
     - name: Test Windows
-      run: go build -o "$PROG_NAME".exe . && go test -v
-
+      run: go build -o drcat.exe . && go test -v
     - name: Upload binaries
       run: |
-        aws s3 cp "./build/$PROG_NAME.exe" "s3://github-artifacts-zeebrow/$PROG_NAME/latest-devel/$GOOS/$GOARCH/"
+        aws s3 cp "./drcat.exe" "s3://github-artifacts-zeebrow/drcat/latest-devel/windows/amd64/"
