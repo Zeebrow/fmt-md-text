@@ -5,41 +5,57 @@ on:
     branches: [ master ]
 
 jobs:
-
   build-linux-amd64:
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
+#    permissions:
+#      id-token: write
+#      contents: read
     steps:
     - uses: actions/checkout@v2
     - name: Set up Go
       uses: actions/setup-go@v2
       with:
         go-version: 1.18
-    - name: Test
-      run: go test -v && go build -o drcat .
+#    - name: Configure AWS credentials
+#      uses: aws-actions/configure-aws-credentials@v1
+#      with:
+#        aws-region: us-east-1
+#        role-to-assume: arn:aws:iam::188154480716:role/github-actions-credentials
+#        role-session-name: gh-action-define
+    - name: Build
+      run : make build
     - name: Install debian
-      run: make clean && make package-deb && sudo apt install ./build/*.deb && drcat -version
-    - name: Upload
       run: |
-        aws s3 cp ./build/drcat.deb "s3://github-artifacts-zeebrow/define/latest-devel/linux/amd64/"
-        aws s3 cp "./build/drcat/linux/amd64/*" "s3://github-artifacts-zeebrow/drcat/latest-devel/linux/amd64/"
-
+        make clean 
+        make package-deb 
+        sudo apt install ./build/*.deb 
+        drcat -version
+#    - name: Upload
+#      run: |
+#        aws s3 cp ./build/drcat.deb "s3://github-artifacts-zeebrow/define/latest-devel/linux/amd64/"
+#        aws s3 cp "./build/drcat/linux/amd64/*" "s3://github-artifacts-zeebrow/drcat/latest-devel/linux/amd64/"
 
   build-windows:
     runs-on: windows-latest
-    permissions:
-      id-token: write
-      contents: read
+#    permissions:
+#      id-token: write
+#      contents: read
     steps:
     - uses: actions/checkout@v2
     - name: Set up Go
       uses: actions/setup-go@v2
       with:
         go-version: 1.18
+#    - name: Configure AWS credentials
+#      uses: aws-actions/configure-aws-credentials@v1
+#      with:
+#        aws-region: us-east-1
+#        role-to-assume: arn:aws:iam::188154480716:role/github-actions-credentials
+#        role-session-name: gh-action-define
     - name: Test Windows
-      run: go build -o drcat.exe . && go test -v
-    - name: Upload binaries
       run: |
-        aws s3 cp "./drcat.exe" "s3://github-artifacts-zeebrow/drcat/latest-devel/windows/amd64/"
+        make clean
+        make build-windows
+#    - name: Upload binaries
+#      run: |
+#        aws s3 cp "./drcat.exe" "s3://github-artifacts-zeebrow/drcat/latest-devel/windows/amd64/"

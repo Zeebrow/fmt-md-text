@@ -10,6 +10,8 @@ import (
 	"testing"
 )
 
+var PROG_NAME = "drcat"
+
 type Executable struct {
 	prefix   string
 	name     string
@@ -29,9 +31,10 @@ func (e *Executable) SetTestBinaryName() {
 		fmt.Printf("Unsupported platform: %s\n", runtime.GOOS)
 		os.Exit(1)
 	}
-	binName := os.Getenv("FMT_MD_TEXT_BINARY")
+	binName := os.Getenv("PROG_BINARY")
 	if binName == "" {
-		e.name = "fmt-md-text"
+		fmt.Println("PROG_BINARY env is unset")
+		os.Exit(1)
 	} else {
 		e.name = binName
 	}
@@ -51,12 +54,12 @@ func TestVersionString(t *testing.T) {
 	if err != nil {
 		t.Errorf("Unknown error\n")
 	}
-	if b.name != "fmt-md-text" {
+	t.Logf("Output: %s\n", fd1)
+	if b.name != PROG_NAME {
 		if strings.HasPrefix(fd1, "dev") {
 			t.Errorf("builds compiled with `make` should not have a 'dev' version string (got %s)\n", fd1)
 		}
 	} else {
-		fmt.Println("got a quickone")
 		if !strings.HasPrefix(fd1, "dev ") {
 			t.Errorf("Expected 'dev' prefix to version string (string was '%s')\n", fd1)
 		}

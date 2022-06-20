@@ -3,7 +3,7 @@ GIT_HASH := $(shell git rev-parse --short HEAD)
 GIT_HASH_LONG := $(shell git rev-parse HEAD)
 BUILD_DATE := $(shell date -I)
 GOARCH := amd64#amd64, 386, arm, ppc64
-GOOS := linux#linux, darwin, windows, netbsd
+#GOOS := linux#linux, darwin, windows, netbsd
 
 DEB_INSTALL_DIR := /usr/bin
 define DEBIAN_CONTROL =
@@ -21,19 +21,6 @@ Description: pretty-print markdown files in your console
 endef
 export DEBIAN_CONTROL
 
-install-zeebrow:
-	go install .
-	go build \
-		-ldflags "\
-		-X 'main.ProgramName=$(PROG_NAME)' \
-		-X 'main.CommitHash=$(GIT_HASH_LONG)' \
-		-X 'main.Version=$(GIT_HASH)' \
-		-X 'main.BuildDate=$(BUILD_DATE)' \
-		" \
-		-o $(PROG_NAME) .
-	FMT_MD_TEXT_BINARY=$(PROG_NAME) go test -v .
-	cp $(PROG_NAME) $(HOME)/.local/bin/scripts
-
 build:
 	go install .
 	go build -ldflags "\
@@ -41,26 +28,22 @@ build:
 		-X 'main.CommitHash=$(GIT_HASH_LONG)' \
 		-X 'main.Version=$(GIT_HASH)' \
 		-X 'main.BuildDate=$(BUILD_DATE)' \
-	" \
+		" \
 		-o build/$(PROG_NAME) .
+	PROG_BINARY=build/$(PROG_NAME) go test -v
 
-build-dev:
+build-windows:
 	go install .
-	go build -ldflags "\
+	GOOS=windows go build -ldflags "\
 		-X 'main.ProgramName=$(PROG_NAME)' \
 		-X 'main.CommitHash=$(GIT_HASH_LONG)' \
 		-X 'main.Version=$(GIT_HASH)' \
 		-X 'main.BuildDate=$(BUILD_DATE)' \
-	" \
-		-o build/$(PROG_NAME)-$(GIT_HASH) .
+		" \
+		-o build/$(PROG_NAME).exe .
+	PROG_BINARY=build/$(PROG_NAME).exe go test -v
 
-test-dev: clean build-dev
-	FMT_MD_TEXT_BINARY=build/$(PROG_NAME)-$(GIT_HASH) go test -v .
-
-test: clean build 
-	FMT_MD_TEXT_BINARY=build/$(PROG_NAME) go test -v .
-
-package-deb: test
+package-deb: build
 	mkdir -p dist/$(PROG_NAME)/DEBIAN
 	mkdir -p dist/$(PROG_NAME)$(DEB_INSTALL_DIR)
 	cp build/$(PROG_NAME) dist/$(PROG_NAME)$(DEB_INSTALL_DIR)/$(PROG_NAME)
