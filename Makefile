@@ -32,8 +32,6 @@ build:
 		" \
 		-o build/$(PROG_NAME) .
 	DRCAT_BINARY_DIR=build go test -v
-	mkdir -p build/dist/$(OS)/$(GOARCH)
-	cp build/$(PROG_NAME) build/dist/$(OS)/$(GOARCH)/
 
 build-windows:
 	go install .
@@ -45,7 +43,6 @@ build-windows:
 		" \
 		-o build/$(PROG_NAME).exe .
 	DRCAT_BINARY_DIR=build go test -v
-
 
 package-deb: build
 	mkdir -p dist/$(PROG_NAME)/DEBIAN
