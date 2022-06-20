@@ -75,8 +75,8 @@ jobs:
         make VERSION="$RELEASE_VERSION" release-deb
         aws s3 cp ./build/*.deb "s3://github-artifacts-zeebrow/drcat/releases/debian/v$RELEASE_VERSION/amd64/"
         aws s3 cp ./build/*.deb.md5 "s3://github-artifacts-zeebrow/drcat/releases/debian/v$RELEASE_VERSION/amd64/"
-        aws s3 cp "./build/${{ env.PROG_NAME }}" "s3://github-artifacts-zeebrow/drcat/releases/binaries/v$RELEASE_VERSION/linux/amd64/"
-        aws s3 cp "./build/${{ env.PROG_NAME }}.md5" "s3://github-artifacts-zeebrow/drcat/releases/binaries/v$RELEASE_VERSION/linux/amd64/"
+        aws s3 cp "./build/${{ env.PROG_NAME }}-$RELEASE_VERSION" "s3://github-artifacts-zeebrow/drcat/releases/binaries/v$RELEASE_VERSION/linux/amd64/"
+        aws s3 cp "./build/${{ env.PROG_NAME }}-$RELEASE_VERSION.md5" "s3://github-artifacts-zeebrow/drcat/releases/binaries/v$RELEASE_VERSION/linux/amd64/"
 
 
 
