@@ -54,11 +54,6 @@ jobs:
         printf "%s" "$VERSION"
         debug
 
-    - name: Get release number
-      run: |
-        export RELEASE_VERSION=$(./build.sh get_version)
-        echo "$RELEASE_VERSION"
-
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -74,7 +69,10 @@ jobs:
         sudo apt remove -y drcat
 
     - name: Build .deb release
-      run : make VERSION="$RELEASE_VERSION" release-deb
+      run : |
+        export RELEASE_VERSION=$(./build.sh get_version)
+        echo "$RELEASE_VERSION"
+        make VERSION="$RELEASE_VERSION" release-deb
 
     - name: Upload artifact
       run: |
