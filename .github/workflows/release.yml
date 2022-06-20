@@ -2,8 +2,8 @@ name: release
 
 on:
   push:
-    tags:
-      - rc-**
+    branches:
+      - 'rc/**'
 
 env:
   PROG_NAME: drcat
@@ -47,19 +47,20 @@ jobs:
         VERSION=
 
         debug(){
+        echo "---debug---"
         echo "BRANCH: $BRANCH"
-        echo ""
         echo "GIT_HASH: $GIT_HASH"
         echo "GIT_HASH_LONG: $GIT_HASH_LONG"
         echo "BUILD_DATE: $BUILD_DATE"
         echo "VERSION: $VERSION"
-        echo ""
+        echo "-----------"
         }
 
-        get_version(){
         if [ "$BRANCH" == "master" ]; then
           BRANCH_TYPE=dev
           VERSION="$GIT_HASH-dev"
+        elif [ "${BRANCH%%/*}" == 'rc' ]; then
+          VERSION="${BRANCH##*/}"
         elif [ "${BRANCH%%/*}" == 'release' ]; then
           VERSION="${BRANCH##*/}"
         else
@@ -67,9 +68,7 @@ jobs:
         fi
         printf "%s" "$VERSION"
         return 0
-        }
         debug
-        get_version
 
     - name: Get release number
       run: ./build.sh get_version
