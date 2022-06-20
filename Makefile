@@ -69,10 +69,13 @@ package-release-deb: build-release
 	mkdir -p dist/$(PROG_NAME)/DEBIAN
 	mkdir -p dist/$(PROG_NAME)$(DEB_INSTALL_DIR)
 	cp build/$(PROG_NAME) dist/$(PROG_NAME)$(DEB_INSTALL_DIR)/$(PROG_NAME)
+	mv build/$(PROG_NAME) build/$(PROG_NAME)-$(VERSION)
 	touch dist/$(PROG_NAME)/DEBIAN/control
 	echo "$$DEBIAN_CONTROL" > dist/$(PROG_NAME)/DEBIAN/control
 	dpkg-deb --build dist/$(PROG_NAME)
 	cp dist/*.deb build/$(PROG_NAME)-$(VERSION).deb
+	cd build; md5sum $(PROG_NAME)-$(VERSION).deb > $(PROG_NAME)-$(VERSION).deb.md5
+	cd build; md5sum $(PROG_NAME)-$(VERSION) > $(PROG_NAME)-$(VERSION).md5
 
 release-deb: clean package-release-deb
 
