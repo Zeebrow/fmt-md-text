@@ -29,6 +29,8 @@ get_version(){
     VERSION="$GIT_HASH-dev"
   elif [ "${BRANCH%%/*}" == 'release' ]; then
     VERSION="${BRANCH##*/}"
+  elif [ "${BRANCH%%/*}" == 'rc' ]; then
+    VERSION="${BRANCH##*/}"
   else
     return 1
   fi

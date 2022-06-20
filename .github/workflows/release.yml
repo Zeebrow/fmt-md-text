@@ -3,7 +3,7 @@ name: release
 on:
   push:
     branches:
-      - 'rc/**'
+      - 'release/**'
 
 env:
   PROG_NAME: drcat
@@ -23,21 +23,7 @@ jobs:
       uses: actions/setup-go@v2
       with:
         go-version: 1.18
-#    - name: Configure AWS credentials
-#      uses: aws-actions/configure-aws-credentials@v1
-#      with:
-#        aws-region: ${{ env.AWS_S3_UPLOAD_REGION }}
-#        role-to-assume: ${{ env.AWS_S3_UPLOAD_ROLE_ARN }}
-#        role-session-name: ${{ env.AWS_S3_UPLOAD_SESSION }}
-#    - name: Build
-#      run : make build
-#    - name: Install debian
-#      run: |
-#        make clean 
-#        make package-deb 
-#        sudo apt install ./build/*.deb 
-#        drcat -version
-    - name: Create release branch
+    - name: Debug
       run: |
         BRANCH=$(git branch --show-current)
         GIT_HASH=$(git rev-parse --short HEAD)
@@ -70,8 +56,24 @@ jobs:
         debug
 
     - name: Get release number
-      run: ./build.sh get_version
-
+      run: |
+        export RELEASE_VERSION=$(./build.sh get_version)
+        echo "$RELEASE_VERSION"
+#
+#    - name: Configure AWS credentials
+#      uses: aws-actions/configure-aws-credentials@v1
+#      with:
+#        aws-region: ${{ env.AWS_S3_UPLOAD_REGION }}
+#        role-to-assume: ${{ env.AWS_S3_UPLOAD_ROLE_ARN }}
+#        role-session-name: ${{ env.AWS_S3_UPLOAD_SESSION }}
+#    - name: Build
+#      run : make build
+#    - name: Install debian
+#      run: |
+#        make clean 
+#        make VERSION="$RELEASE_VERSION" package-deb 
+#        sudo apt install ./build/*.deb 
+#        drcat -version
 #    - name: Upload
 #      run: |
 #        aws s3 cp ./build/*.deb "s3://github-artifacts-zeebrow/drcat/dist/debian/amd64/"
