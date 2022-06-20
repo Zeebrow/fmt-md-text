@@ -32,8 +32,8 @@ build:
 		" \
 		-o build/$(PROG_NAME) .
 	DRCAT_BINARY_DIR=build go test -v
-	mkdir -p build/$(OS)/$(GOARCH)
-	cp build/$(PROG_NAME) build/$(OS)/$(GOARCH)/
+	mkdir -p build/dist/$(OS)/$(GOARCH)
+	cp build/$(PROG_NAME) build/dist/$(OS)/$(GOARCH)/
 
 build-windows:
 	go install .
