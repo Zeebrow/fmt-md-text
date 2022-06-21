@@ -3,9 +3,7 @@
 Quickly render markdown text to your Linux\* console. 
 Written in Go with [glamour](https://github.com/charmbracelet/glamour).
 
-\* *There are issues rendering colored text in Powershell and CMD.
-[Powershell7.3.0-preview.4](https://github.com/PowerShell/PowerShell/releases/tag/v7.3.0-preview.4) promises virtual terminal fixes, but I haven't gotten them to work with `go` yet (with or without glamour). I'd like to
-support Windows, but can't yet. Sorry!*
+\* [Windows fix coming soon™](https://github.com/Zeebrow/fmt-md-text/issues/4)
 
 ## download release
 
