@@ -25,6 +25,7 @@ class Branch:
         if not inp.lower().startswith('y'):
             sys.exit(1)
         co = subprocess.run(f"git checkout -b {self.__repr__()}".split(), capture_output=True, encoding='utf-8')
+        subprocess.run(f"git checkout master".split())
         if co.returncode == 128:
             print(f"stdout: {co.stdout}")
             print(f"stderr: {co.stderr}")
