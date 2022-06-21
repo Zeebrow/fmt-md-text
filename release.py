@@ -104,12 +104,12 @@ class Branch:
             return self.__lt__(other)
 
 
-def get_version():
+def get_version() -> str:
     branch = subprocess.run("git branch --show-current".split(),
             capture_output=True, encoding='utf-8')
-    print(branch.stdout.strip().split("/")[1])
+    return branch.stdout.strip().split("/")[1]
 
-def get_release_branches():
+def get_release_branches() -> List[Branch]:
     branches = []
     _b = subprocess.run("git branch --list".split(),
             capture_output=True, encoding='utf-8')
