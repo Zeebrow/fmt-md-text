@@ -104,10 +104,10 @@ class Branch:
             return self.__lt__(other)
 
 
-def get_current_branch():
+def get_version():
     branch = subprocess.run("git branch --show-current".split(),
             capture_output=True, encoding='utf-8')
-    print(branch.stdout.strip())
+    print(branch.stdout.strip().split("/")[1])
 
 def get_release_branches():
     branches = []
@@ -140,7 +140,7 @@ def get_next_release(rel_type: str):
     else:
         print(f"unknon type '{rel_type}' - must be one of major|minor|patch")
         sys.exit(1)
-    return nb
+    return str(nb).split("/")[1]
 
         
 def deboog():
@@ -164,6 +164,7 @@ def main():
     group.add_argument("-M", "--major", action='store_true', help="bump the major version of the latest release")
     group.add_argument("-m", "--minor", action='store_true', help="bump the minor version of the latest release")
     group.add_argument("-p", "--patch", action='store_true', help="bump the patch version of the latest release")
+    group.add_argument("-v", "--get-version", action='store_true', help="print the current version number and exit")
     group.add_argument("-l", "--latest-release", action='store_true', help="print the latest release and exit")
     group.add_argument("-n", "--next-release", action='store', help="print the next release's branch name and exit", choices=['major', 'minor', 'patch'])
     group.add_argument("-a", "--all-releases", action='store_true', help="print all branches tagged with 'release/*' and exit")
@@ -204,6 +205,9 @@ def main():
         exit(0)
     elif args.next_release:
         print(get_next_release(args.next_release))
+        exit(0)
+    elif args.get_version:
+        print(get_version())
         exit(0)
     elif args.debug:
         deboog()
