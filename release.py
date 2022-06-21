@@ -120,6 +120,27 @@ def get_release_branches():
 
 def get_latest(branches: List[Branch]) -> Branch:
     return max(branches)
+
+def get_next_release(rel_type: str):
+    l = get_latest(get_release_branches())
+    nb = Branch(str(l))
+    if rel_type == 'major':
+        nb.major = l.major + 1
+        nb.minor = 0
+        nb.patch = 0
+    elif rel_type == 'minor':
+        nb.major = l.major
+        nb.minor = l.minor + 1
+        nb.patch = 0
+    elif rel_type == 'patch':
+        nb.major = l.major
+        nb.minor = l.minor
+        nb.patch = l.patch + 1
+    else:
+        print(f"unknon type '{rel_type}' - must be one of major|minor|patch")
+        sys.exit(1)
+    return nb
+
         
 def deboog():
     branches = get_release_branches()
@@ -143,6 +164,7 @@ def main():
     group.add_argument("-m", "--minor", action='store_true', help="bump the minor version of the latest release")
     group.add_argument("-p", "--patch", action='store_true', help="bump the patch version of the latest release")
     group.add_argument("-l", "--latest-release", action='store_true', help="print the latest release and exit")
+    group.add_argument("-n", "--next-release", action='store', help="print the next release's branch name and exit", choices=['major', 'minor', 'patch'])
     group.add_argument("-a", "--all-releases", action='store_true', help="print all branches tagged with 'release/*' and exit")
     group.add_argument("-d", "--debug", action='store_true', help="print misc. info")
     args = parser.parse_args()
@@ -151,6 +173,7 @@ def main():
     new_branch = Branch(l.name)
     if args.major:
         print('major')
+        get_next_release('major')
         new_branch.major = l.major + 1
         new_branch.minor = 0
         new_branch.patch = 0
@@ -158,6 +181,7 @@ def main():
         new_branch.create()
     elif args.minor:
         print('minor')
+        get_next_release('minor')
         new_branch.major = l.major
         new_branch.minor = l.minor + 1
         new_branch.patch = 0
@@ -165,6 +189,7 @@ def main():
         new_branch.create()
     elif args.patch:
         print('patch')
+        get_next_release('patch')
         new_branch.major = l.major
         new_branch.minor = l.minor
         new_branch.patch = l.patch + 1
@@ -175,6 +200,9 @@ def main():
         exit(0)
     elif args.all_releases:
         print(get_release_branches())
+        exit(0)
+    elif args.next_release:
+        print(get_next_release(args.next_release))
         exit(0)
     elif args.debug:
         deboog()

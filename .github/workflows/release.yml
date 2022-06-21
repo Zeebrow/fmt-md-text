@@ -22,38 +22,6 @@ jobs:
       uses: actions/setup-go@v2
       with:
         go-version: 1.18
-    - name: Debug
-      run: |
-        BRANCH=$(git branch --show-current)
-        GIT_HASH=$(git rev-parse --short HEAD)
-        GIT_HASH_LONG=$(git rev-parse HEAD)
-        BUILD_DATE=$(date -I)
-        BRANCH_TYPE=${BRANCH%%/*} #master,release
-        VERSION=
-
-        debug(){
-        echo "---debug---"
-        echo "BRANCH: $BRANCH"
-        echo "GIT_HASH: $GIT_HASH"
-        echo "GIT_HASH_LONG: $GIT_HASH_LONG"
-        echo "BUILD_DATE: $BUILD_DATE"
-        echo "VERSION: $VERSION"
-        echo "-----------"
-        }
-
-        if [ "$BRANCH" == "master" ]; then
-          BRANCH_TYPE=dev
-          VERSION="$GIT_HASH-dev"
-        elif [ "${BRANCH%%/*}" == 'rc' ]; then
-          VERSION="${BRANCH##*/}"
-        elif [ "${BRANCH%%/*}" == 'release' ]; then
-          VERSION="${BRANCH##*/}"
-        else
-          :
-        fi
-        printf "%s" "$VERSION"
-        debug
-
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
       with:
@@ -70,7 +38,8 @@ jobs:
 
     - name: Build and upload .deb release for version
       run : |
-        export RELEASE_VERSION=$(./build.sh get_version)
+        #export RELEASE_VERSION=$(./build.sh get_version)
+        export RELEASE_VERSION=$(./release.py -l)
         echo "$RELEASE_VERSION"
         make VERSION="$RELEASE_VERSION" release-deb
         aws s3 cp ./build/*.deb "s3://github-artifacts-zeebrow/drcat/releases/debian/v$RELEASE_VERSION/amd64/"
