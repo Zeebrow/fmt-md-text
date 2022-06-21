@@ -20,3 +20,6 @@ jobs:
         make build-windows
     - name: Powershell or nah? Backslashes?
       run: Get-Filehash -Algorithm md5 .\build\drcat.exe | select -ExpandProperty Hash
+    - name: Install MSIX
+      run: |
+        Add-AppxProvisionedPackage -Path C:\offline -PackagePath C:\MSIX\MyPackage.msix -LicensePath C:\MSIX\MyLicense.xml
