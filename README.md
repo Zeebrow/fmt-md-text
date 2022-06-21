@@ -3,7 +3,7 @@
 Quickly render markdown text to your Linux\* console. 
 Written in Go with [glamour](https://github.com/charmbracelet/glamour).
 
-\* [Windows fix coming soon™](https://github.com/Zeebrow/fmt-md-text/issues/4)
+\* [Windows fix coming soon™](https://github.com/Zeebrow/drcat/issues/4)
 
 ## download release
 
@@ -29,13 +29,13 @@ chmod +x drcat
 Be careful running as root!
 
 ```bash
-fmt-md-text [-f md-filename] [-l]
+drcat [-f md-filename] [-l]
 ```
 
 ```bash
-fmt-md-text < README.md
-fmt-md-text -f README.md
-fmt-md-text -f README.md | less -R
+drcat < README.md
+drcat -f README.md
+drcat -f README.md | less -R
 ```
 
 `NICE TO HAVE:` detect content length exceeding terminal height and drop to `$PAGER`
