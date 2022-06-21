@@ -1,7 +1,11 @@
 # Dr. Cat
 
-Quickly render markdown text to the console. 
+Quickly render markdown text to your Linux\* console. 
 Written in Go with [glamour](https://github.com/charmbracelet/glamour).
+
+\* *There are issues rendering colored text in Powershell and CMD.
+[Powershell7.3.0-preview.4](https://github.com/PowerShell/PowerShell/releases/tag/v7.3.0-preview.4) promises virtual terminal fixes, but I haven't gotten them to work with `go` yet (with or without glamour). I'd like to
+support Windows, but can't yet. Sorry!*
 
 ## download release
 
@@ -20,11 +24,6 @@ md5sum -c drcat-1.0.0.md5
 mv drcat-1.0.0 drcat
 chmod +x drcat
 ./drcat -version
-```
-
-Binary windows amd64
-```
-
 ```
 
 ## example usage

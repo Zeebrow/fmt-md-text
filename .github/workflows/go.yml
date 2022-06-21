@@ -3,8 +3,7 @@ name: Go
 on:
   push:
     branches:
-      #- master
-      - asdfasdf
+      - master
 
 env:
   PROG_NAME: drcat
@@ -45,28 +44,3 @@ jobs:
         aws s3 cp ./build/*.deb.md5 "s3://github-artifacts-zeebrow/drcat/latest-dev/debian/amd64/"
         aws s3 cp "./build/${{ env.PROG_NAME }}" "s3://github-artifacts-zeebrow/drcat/latest-dev/linux/amd64/"
         aws s3 cp "./build/${{ env.PROG_NAME }}.md5" "s3://github-artifacts-zeebrow/drcat/latest-dev/linux/amd64/"
-
-  build-windows:
-    runs-on: windows-latest
-    permissions:
-      id-token: write
-      contents: read
-    steps:
-    - uses: actions/checkout@v3
-    - name: Set up Go
-      uses: actions/setup-go@v3
-      with:
-        go-version: 1.18
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-region: ${{ env.AWS_S3_UPLOAD_REGION }}
-        role-to-assume: ${{ env.AWS_S3_UPLOAD_ROLE_ARN }}
-        role-session-name: ${{ env.AWS_S3_UPLOAD_SESSION }}
-    - name: Test Windows
-      run: |
-        make clean
-        make build-windows
-    - name: Upload binaries
-      run: |
-        aws s3 cp "./build/${{ env.PROG_NAME }}.exe" "s3://github-artifacts-zeebrow/drcat/latest-dev/windows/amd64/"

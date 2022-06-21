@@ -8,7 +8,7 @@ env:
   PROG_NAME: drcat
   AWS_S3_UPLOAD_SESSION: gh-action-session-drcat
   AWS_S3_UPLOAD_REGION: us-east-1
-  AWS_S3_UPLOAD_ROLE_ARN: arn:aws:iam::${{ sercrets.AWS_ACCOUNT }}:role/ghactions-drcat-s3-upload
+  AWS_S3_UPLOAD_ROLE_ARN: arn:aws:iam::${{ secrets.AWS_ACCOUNT }}:role/ghactions-drcat-s3-upload
 
 jobs:
   build-linux-amd64:
@@ -77,40 +77,3 @@ jobs:
         aws s3 cp ./build/*.deb.md5 "s3://github-artifacts-zeebrow/drcat/releases/debian/v$RELEASE_VERSION/amd64/"
         aws s3 cp "./build/${{ env.PROG_NAME }}-$RELEASE_VERSION" "s3://github-artifacts-zeebrow/drcat/releases/binaries/v$RELEASE_VERSION/linux/amd64/"
         aws s3 cp "./build/${{ env.PROG_NAME }}-$RELEASE_VERSION.md5" "s3://github-artifacts-zeebrow/drcat/releases/binaries/v$RELEASE_VERSION/linux/amd64/"
-
-  build-windows:
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      contents: read
-    steps:
-    - name: Install MSIX
-      run: |
-        Add-AppxProvisionedPackage -Path C:\offline -PackagePath C:\MSIX\MyPackage.msix -LicensePath C:\MSIX\MyLicense.xml
-    - uses: actions/checkout@v2
-    - name: Set up Go
-      uses: actions/setup-go@v2
-      with:
-        go-version: 1.18
-    - name: Configure AWS credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-region: ${{ env.AWS_S3_UPLOAD_REGION }}
-        role-to-assume: ${{ env.AWS_S3_UPLOAD_ROLE_ARN }}
-        role-session-name: ${{ env.AWS_S3_UPLOAD_SESSION }}
-    - name: Build Windows
-      run: |
-        make clean
-        make build-windows
-    - name: Upload binaries
-      run: |
-        aws s3 cp "./build/${{ env.PROG_NAME }}.exe" "s3://github-artifacts-zeebrow/drcat/latest-devel/windows/amd64/"
-    - name: Build and upload .deb release for version
-      run : |
-        export RELEASE_VERSION=$(./build.sh get_version)
-        echo "$RELEASE_VERSION"
-        make VERSION="$RELEASE_VERSION" release-windows
-        aws s3 cp "./build/${{ env.PROG_NAME }}-$RELEASE_VERSION" "s3://github-artifacts-zeebrow/drcat/releases/binaries/v$RELEASE_VERSION/linux/amd64/"
-
-
-

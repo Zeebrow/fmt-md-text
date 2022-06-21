@@ -35,17 +35,6 @@ build:
 	DRCAT_BINARY_DIR=build go test -v
 	cd build; md5sum $(PROG_NAME) > $(PROG_NAME).md5
 
-build-windows:
-	go install .
-	GOOS=windows go build -ldflags "\
-		-X 'main.ProgramName=$(PROG_NAME)' \
-		-X 'main.CommitHash=$(GIT_HASH_LONG)' \
-		-X 'main.Version=$(GIT_HASH)' \
-		-X 'main.BuildDate=$(BUILD_DATE)' \
-		" \
-		-o build/$(PROG_NAME).exe .
-	DRCAT_BINARY_DIR=build go test -v
-
 package-deb: build
 	mkdir -p dist/$(PROG_NAME)/DEBIAN
 	mkdir -p dist/$(PROG_NAME)$(DEB_INSTALL_DIR)
@@ -80,22 +69,6 @@ package-release-deb: build-release
 	cd build; md5sum $(PROG_NAME)-$(VERSION) > $(PROG_NAME)-$(VERSION).md5
 
 release-deb: clean package-release-deb
-
-build-release-windows:
-	go install .
-	GOOS=windows go build -ldflags "\
-		-X 'main.ProgramName=$(PROG_NAME)' \
-		-X 'main.CommitHash=$(GIT_HASH_LONG)' \
-		-X 'main.Version=$(VERSION)' \
-		-X 'main.BuildDate=$(BUILD_DATE)' \
-		" \
-		-o build/$(PROG_NAME).exe .
-	DRCAT_BINARY_DIR=build go test -v
-
-package-release-windows: build-release-windows
-	cd build; 
-
-release-windows: clean package-release-windows
 
 remove-deb:
 	sudo apt -y remove $(PROG_NAME) 

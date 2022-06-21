@@ -38,8 +38,53 @@ get_version(){
   return 0
 }
 
+get_latest_release(){ 
+  git branch --list | grep release | sort -rn | head -1 | tr -d ' ' | cut -d '/' -f2
+}
+
+release(){
+  local M m p
+  local lM lm lp
+  local latest=$(get_latest_release)
+  lM=$(echo "$latest" | cut -d '.' -f1)
+  lm=$(echo "$latest" | cut -d '.' -f2)
+  lp=$(echo "$latest" | cut -d '.' -f3)
+  case "$1" in
+    --major) 
+      M=$((lM + 1))
+      m=0
+      p=0
+      ;;
+    --minor)
+      M=$lM
+      m=$((lm + 1))
+      p=0
+      ;;
+    --patch) 
+      M=$lM
+      m=$lm
+      p=$((lp + 1))
+      ;;
+    *) echo "invalid option '$1'" && echo 'build.sh release --major|--minor|--patch' && exit 1
+  esac
+  #echo "$M.$m.$p" | tr -d '\n'
+  _create_release_branch "$M.$m.$p"
+}
+
+_create_release_branch(){
+  set -e
+  [ $(git branch --show-current) != 'master' ] && echo you must perform releases from the master branch && exit 1
+  B="release/$1"
+  echo "$lM.$lm.$lp --> $1"
+  git checkout -b "$B"
+  git commit -am "$B"
+  git push -u origin "$B"
+}
+
 case "$1" in
   get_version) get_version;;
+  latest) get_latest_release;;
+  release) shift; release "$@";;
   *) echo "invalid option '$1'" && usage && exit 1
 esac
 exit 0
