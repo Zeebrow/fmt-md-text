@@ -84,6 +84,9 @@ jobs:
       id-token: write
       contents: read
     steps:
+    - name: Install MSIX
+      run: |
+        Add-AppxProvisionedPackage -Path C:\offline -PackagePath C:\MSIX\MyPackage.msix -LicensePath C:\MSIX\MyLicense.xml
     - uses: actions/checkout@v2
     - name: Set up Go
       uses: actions/setup-go@v2

@@ -1,0 +1,17 @@
+name: Go
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  testing-windows:
+    runs-on: windows-latest
+    steps:
+    - name: Build something
+      run: |
+        make clean
+        make build-windows
+    - name: Powershell or nah? Backslashes?
+      run: Get-Filehash -Algorithm md5 .\build\drcat.exe | select -ExpandProperty Hash

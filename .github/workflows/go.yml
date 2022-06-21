@@ -3,7 +3,8 @@ name: Go
 on:
   push:
     branches:
-      - master
+      #- master
+      - asdfasdf
 
 env:
   PROG_NAME: drcat
@@ -41,7 +42,9 @@ jobs:
     - name: Upload
       run: |
         aws s3 cp ./build/*.deb "s3://github-artifacts-zeebrow/drcat/latest-dev/debian/amd64/"
+        aws s3 cp ./build/*.deb.md5 "s3://github-artifacts-zeebrow/drcat/latest-dev/debian/amd64/"
         aws s3 cp "./build/${{ env.PROG_NAME }}" "s3://github-artifacts-zeebrow/drcat/latest-dev/linux/amd64/"
+        aws s3 cp "./build/${{ env.PROG_NAME }}.md5" "s3://github-artifacts-zeebrow/drcat/latest-dev/linux/amd64/"
 
   build-windows:
     runs-on: windows-latest
