@@ -16,6 +16,10 @@ class Branch:
         self.patch = int(self.version.split(".")[2])
 
     def create(self):
+        curr_branches = [str(b) for b in get_release_branches()]
+        if self.__repr__() in curr_branches:
+            print(f"A branch named '{self.__repr__()} already exists!")
+            sys.exit(1)
         msg = str(input(f"Enter commit message: "))
         inp = str(input(f"Create and commit new branch '{self.__repr__()}' with message '{msg}'? (y/n) "))
         if not inp.lower().startswith('y'):
@@ -169,10 +173,12 @@ def main():
     elif args.latest_release:
         print(get_latest(get_release_branches()))
         exit(0)
-    elif all_releases:
+    elif args.all_releases:
         print(get_release_branches())
+        exit(0)
+    elif args.debug:
+        deboog()
         exit(0)
     else:
         parser.print_help()
 main()
-#deboog()
