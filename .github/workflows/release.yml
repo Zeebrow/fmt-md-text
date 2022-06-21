@@ -8,7 +8,7 @@ env:
   PROG_NAME: drcat
   AWS_S3_UPLOAD_SESSION: gh-action-session-drcat
   AWS_S3_UPLOAD_REGION: us-east-1
-  AWS_S3_UPLOAD_ROLE_ARN: arn:aws:iam::188154480716:role/ghactions-drcat-s3-upload
+  AWS_S3_UPLOAD_ROLE_ARN: arn:aws:iam::${{ sercrets.AWS_ACCOUNT }}:role/ghactions-drcat-s3-upload
 
 jobs:
   build-linux-amd64:
