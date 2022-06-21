@@ -9,6 +9,11 @@ jobs:
   testing-windows:
     runs-on: windows-latest
     steps:
+    - uses: actions/checkout@v3
+    - name: Set up Go
+      uses: actions/setup-go@v3
+      with:
+        go-version: 1.18
     - name: Build something
       run: |
         make clean
