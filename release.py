@@ -38,8 +38,8 @@ class Branch:
                 sys.exit(1)
                 
         precheck()
-        msg = str(input(f"Enter commit message: "))
-        inp = str(input(f"Create and commit new branch '{self.__repr__()}' with message '{msg}'? (y/n) "))
+        msg = subprocess.run("git log -1 --pretty='%s'".split(), capture_output=True, encoding='utf-8')
+        inp = str(input(f"Create and push new branch '{self.__repr__()}' with message '{msg}'? (y/n) "))
         if not inp.lower().startswith('y'):
             sys.exit(1)
 
@@ -64,6 +64,7 @@ class Branch:
         else:
             print(push.stdout)
         subprocess.run(f"git checkout master".split())
+        #end Branch().create()
 
     def __repr__(self):
         return f"{self.branch_type}/{self.major}.{self.minor}.{self.patch}"

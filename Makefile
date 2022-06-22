@@ -72,6 +72,7 @@ test-release-deb:
 	wget https://github-artifacts-zeebrow.s3.amazonaws.com/$(PROG_NAME)/releases/debian/v$(VERSION)/amd64/$(PROG_NAME)-$(VERSION).deb
 	wget https://github-artifacts-zeebrow.s3.amazonaws.com/$(PROG_NAME)/releases/debian/v$(VERSION)/amd64/$(PROG_NAME)-$(VERSION).deb.md5
 	md5sum -c $(PROG_NAME)-$(VERSION).deb.md5
+	$(PROG_NAME) -version
 	-sudo apt -y remove $(PROG_NAME)
 	sudo apt install ./*.deb
 
