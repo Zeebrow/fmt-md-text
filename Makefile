@@ -68,10 +68,17 @@ package-release-deb: build-release
 	cd build; md5sum $(PROG_NAME)-$(VERSION).deb > $(PROG_NAME)-$(VERSION).deb.md5
 	cd build; md5sum $(PROG_NAME)-$(VERSION) > $(PROG_NAME)-$(VERSION).md5
 
+test-release-deb:
+	wget https://github-artifacts-zeebrow.s3.amazonaws.com/$(PROG_NAME)/releases/debian/v$(VERSION)/amd64/$(PROG_NAME)-$(VERSION).deb
+	wget https://github-artifacts-zeebrow.s3.amazonaws.com/$(PROG_NAME)/releases/debian/v$(VERSION)/amd64/$(PROG_NAME)-$(VERSION).deb.md5
+	md5sum -c $(PROG_NAME)-$(VERSION).deb.md5
+	-sudo apt -y remove $(PROG_NAME)
+	sudo apt install ./*.deb
+
 release-deb: clean package-release-deb
 
 remove-deb:
-	sudo apt -y remove $(PROG_NAME) 
+	-sudo apt -y remove $(PROG_NAME) 
 reinstall-deb: clean remove-deb package-deb
 	sudo apt install ./build/$(PROG_NAME).deb
 
