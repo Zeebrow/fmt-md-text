@@ -39,7 +39,7 @@ jobs:
     - name: Build and upload .deb release for version
       run : |
         #export RELEASE_VERSION=$(./build.sh get_version)
-        export RELEASE_VERSION=$(./release.py -v)
+        export RELEASE_VERSION=$(./release.py -r)
         echo "$RELEASE_VERSION"
         make VERSION="$RELEASE_VERSION" release-deb
         aws s3 cp ./build/*.deb "s3://github-artifacts-zeebrow/drcat/releases/debian/v$RELEASE_VERSION/amd64/"
