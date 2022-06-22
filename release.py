@@ -19,10 +19,25 @@ class Branch:
         return f"{self.major}.{self.minor}.{self.patch}"
 
     def create(self):
-        curr_branches = [str(b) for b in get_release_branches()]
-        if self.__repr__() in curr_branches:
-            print(f"A branch named '{self.__repr__()} already exists!")
-            sys.exit(1)
+        def precheck():
+            curr_branches = [str(b) for b in get_release_branches()]
+            if self.__repr__() in curr_branches:
+                print(f"A branch named '{self.__repr__()} already exists!")
+                sys.exit(1)
+            is_master = subprocess.run(f"git branch --show-current".split(), capture_output=True, encoding='utf-8')
+            if not 'master' in is_master.stdout:
+                print("You must run this script from the master branch")
+                print(f"stdout: {curr_branch.stdout}")
+                print(f"stderr: {curr_branch.stderr}")
+                sys.exit(1)
+            curr_branch = subprocess.run(f"git status --porcelain".split(), capture_output=True, encoding='utf-8')
+            if curr_branch.stdout != "":
+                print("You have uncommitted changes:")
+                print(f"stdout: {curr_branch.stdout}")
+                print(f"stderr: {curr_branch.stderr}")
+                sys.exit(1)
+                
+        precheck()
         msg = str(input(f"Enter commit message: "))
         inp = str(input(f"Create and commit new branch '{self.__repr__()}' with message '{msg}'? (y/n) "))
         if not inp.lower().startswith('y'):
@@ -107,8 +122,11 @@ def get_release_branches() -> List[Branch]:
             branches.append(Branch(b.strip()))
     return branches
 
-def get_latest(branches: List[Branch]) -> Branch:
-    return max(branches)
+def get_latest(branches=None) -> Branch:
+    if not branches:
+        return max(get_release_branches())
+    else:
+        return max(branches)
 
 def get_next_release(rel_type: str):
     l = get_latest(get_release_branches())
