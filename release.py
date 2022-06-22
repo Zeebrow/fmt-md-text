@@ -106,10 +106,12 @@ class Branch:
         else:
             return self.__lt__(other)
 
-
 def get_version() -> str:
     branch = subprocess.run("git branch --show-current".split(),
             capture_output=True, encoding='utf-8')
+    if not branch.stdout.startswith("releases"):
+        print(f"You are not on a release branch! ({branch.stdout.strip()})")
+        sys.exit(1)
     return branch.stdout.strip().split("/")[1]
 
 def get_release_branches() -> List[Branch]:
@@ -189,12 +191,10 @@ def main():
         new_branch.create()
     elif args.latest_release:
         print(get_latest(get_release_branches()))
-    elif args.all_releases:
+    elif args.list_releases:
         [print(br) for br in get_release_branches()]
     elif args.get_version:
         print(get_version())
-    elif args.debug:
-        deboog()
     else:
         parser.print_help()
     sys.exit(0)
