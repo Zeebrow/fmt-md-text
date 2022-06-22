@@ -38,7 +38,8 @@ class Branch:
                 sys.exit(1)
                 
         precheck()
-        msg = subprocess.run("git log -1 --pretty='%s'".split(), capture_output=True, encoding='utf-8')
+        sp_glo = subprocess.run("git log -1 --pretty='%s'".split(), capture_output=True, encoding='utf-8')
+        msg = sp_glo.stdout.strip()
         inp = str(input(f"Create and push new branch '{self.__repr__()}' with message '{msg}'? (y/n) "))
         if not inp.lower().startswith('y'):
             sys.exit(1)
