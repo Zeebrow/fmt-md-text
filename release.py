@@ -109,7 +109,7 @@ class Branch:
 def get_version() -> str:
     branch = subprocess.run("git branch --show-current".split(),
             capture_output=True, encoding='utf-8')
-    if not branch.stdout.startswith("releases"):
+    if not branch.stdout.startswith("release"):
         print(f"You are not on a release branch! ({branch.stdout.strip()})")
         sys.exit(1)
     return branch.stdout.strip().split("/")[1]
