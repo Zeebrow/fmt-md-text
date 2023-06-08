@@ -35,13 +35,10 @@ jobs:
         role-to-assume: ${{ env.AWS_S3_UPLOAD_ROLE_ARN }}
         role-session-name: ${{ env.AWS_S3_UPLOAD_SESSION }}
 
-    - name: Build
-      run : make package-release-deb
-
-    - name: Install debian
+    - name: Build and install debian
       run: |
         make clean 
-        make package-deb 
+        make package-release-deb
         yes | sudo apt install ./build/*.deb 
         drcat -version
 
@@ -50,6 +47,8 @@ jobs:
 
     - name: Upload
       run: |
+        ls build/
+        ls dist/
         aws s3 cp ./build/*.deb "s3://github-artifacts-zeebrow/drcat/latest-dev/debian/amd64/"
         aws s3 cp ./build/*.deb.md5 "s3://github-artifacts-zeebrow/drcat/latest-dev/debian/amd64/"
         aws s3 cp "./build/${{ env.PROG_NAME }}" "s3://github-artifacts-zeebrow/drcat/latest-dev/linux/amd64/"
