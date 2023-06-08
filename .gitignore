@@ -1,4 +1,5 @@
 fmt-md-text
+drcat
 *.exe
 dist/
 .vscode/
