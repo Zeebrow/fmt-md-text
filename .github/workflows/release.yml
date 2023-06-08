@@ -47,7 +47,7 @@ jobs:
         echo '---------------------------'
         echo "building $(./release.py -v)"
         echo '---------------------------'
-        make VERSION=$(./release -v) package-release-deb
+        make VERSION=$(./release.py -v) package-release-deb
 
     - name: Upload
       run: |
