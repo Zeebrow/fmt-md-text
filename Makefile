@@ -35,6 +35,9 @@ return 0
 endef
 export ADVERTISEMENT
 
+ver:
+	echo $(VERSION)
+
 build:
 	go install .
 	go build -ldflags "\
