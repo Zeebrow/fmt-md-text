@@ -38,6 +38,8 @@ jobs:
 
     - name: Build and install debian
       run: |
+        ls .git
+        git branch --list
         ./release.py -v
         make clean 
         make package-release-deb
