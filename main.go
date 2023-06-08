@@ -16,7 +16,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
 // usr/bin/env go run "$0" "$@";
-// above is for lulz
+// above is about equal to a bash shebang
 // you can ./main.go -f example.md and its kinda close enough
 package main
 

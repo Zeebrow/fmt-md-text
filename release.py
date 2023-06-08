@@ -27,8 +27,8 @@ class Branch:
             is_master = subprocess.run(f"git branch --show-current".split(), capture_output=True, encoding='utf-8')
             if not 'master' in is_master.stdout:
                 print("You must run this script from the master branch")
-                print(f"stdout: {curr_branch.stdout}")
-                print(f"stderr: {curr_branch.stderr}")
+                print(f"stdout: {is_master.stdout}")
+                print(f"stderr: {is_master.stderr}")
                 sys.exit(1)
             curr_branch = subprocess.run(f"git status --porcelain".split(), capture_output=True, encoding='utf-8')
             if curr_branch.stdout != "":
