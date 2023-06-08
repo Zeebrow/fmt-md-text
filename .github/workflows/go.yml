@@ -38,17 +38,16 @@ jobs:
 
     - name: Build and install debian
       run: |
-        ls .git
-        git fetch --all
-        git branch -a
-        ./release.py -v
+        echo '---------------------------'
+        echo "building $(./release.py -v)"
+        echo '---------------------------'
         make clean 
         make package-release-deb
-        yes | sudo apt install ./build/*.deb 
+        yes | sudo apt-get install ./build/*.deb 
         drcat -version
 
     - name: Ensure uninstallable
-      run: sudo apt -y remove ${{ env.PROG_NAME }}
+      run: sudo apt-get -y remove ${{ env.PROG_NAME }}
 
     - name: Upload .deb
       run: |
