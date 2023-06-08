@@ -5,8 +5,8 @@ BUILD_DATE := $(shell date -I)
 GOARCH := amd64#amd64, 386, arm, ppc64
 #GOOS := linux#linux, darwin, windows, netbsd
 OS := linux
-#VERSION := 0.0.1-dev
-VERSION := $(shell ./release.py -v)
+VERSION := 0.0.0-dev
+#VERSION := $(shell ./release.py -v)
 DEB_INSTALL_DIR := /usr/bin
 
 define DEBIAN_CONTROL =
@@ -89,20 +89,6 @@ package-release-deb: build-release
 sign-deb-release: package-release-deb
 	@echo
 
-test-release-deb:
-	wget https://github-artifacts-zeebrow.s3.amazonaws.com/$(PROG_NAME)/releases/debian/v$(VERSION)/amd64/$(PROG_NAME)-$(VERSION).deb
-	wget https://github-artifacts-zeebrow.s3.amazonaws.com/$(PROG_NAME)/releases/debian/v$(VERSION)/amd64/$(PROG_NAME)-$(VERSION).deb.md5
-	md5sum -c $(PROG_NAME)-$(VERSION).deb.md5
-	$(PROG_NAME) -version
-	-sudo apt -y remove $(PROG_NAME)
-	sudo apt install ./*.deb
-
-release-deb: clean package-release-deb
-
-remove-deb:
-	-sudo apt -y remove $(PROG_NAME) 
-reinstall-deb: clean remove-deb package-deb
-	sudo apt install ./build/$(PROG_NAME).deb
 
 clean:
 	rm -rf dist/

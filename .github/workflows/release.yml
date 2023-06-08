@@ -1,14 +1,14 @@
 # #############
-# distribute development binaries
+# distribute release binaries
 # We're only distributing what is built with the latest version of go
 # This will be run on every commit to a branch with an open pull request to a
-# release candidate branch, and uploaded to s3 drcat/latest-dev
-name: release candidate
+# release branch, and uploaded to s3 drcat/releases/
+name: release
 
 on:
   pull_request:
     branches:
-      - 'rc/*'
+      - 'release/*'
 
 env:
   AWS_S3_UPLOAD_SESSION: gh-action-session-drcat
@@ -42,18 +42,17 @@ jobs:
         role-to-assume: ${{ env.AWS_S3_UPLOAD_ROLE_ARN }}
         role-session-name: ${{ env.AWS_S3_UPLOAD_SESSION }}
 
-    - name: Build and install debian
+    - name: Build .deb binary package
       run: |
         echo '---------------------------'
-        echo "building $(./release.py -n)"
+        echo "building $(./release.py -v)"
         echo '---------------------------'
-        make clean 
-        make VERSION=$(./release.py -n) package-release-deb
+        make VERSION=$(./release.py -v) package-release-deb
 
     - name: Upload
       run: |
-        aws s3 cp ./build/drcat-$(./release.py -n).deb "s3://github-artifacts-zeebrow/drcat/latest-dev/debian/amd64/"
-        aws s3 cp ./build/drcat-$(./release.py -n).deb.md5 "s3://github-artifacts-zeebrow/drcat/latest-dev/debian/amd64/"
-        aws s3 cp ./build/drcat-$(./release.py -n) "s3://github-artifacts-zeebrow/drcat/latest-dev/linux/amd64/"
-        aws s3 cp ./build/drcat-$(./release.py -n).md5 "s3://github-artifacts-zeebrow/drcat/latest-dev/linux/amd64/"
+        aws s3 cp ./build/drcat-$(./release.py -v).deb "s3://github-artifacts-zeebrow/drcat/releases/debian/$(./release.py -v)"
+        aws s3 cp ./build/drcat-$(./release.py -v).deb.md5 "s3://github-artifacts-zeebrow/drcat/releases/debian/$(./release.py -v)"
+        aws s3 cp ./build/drcat-$(./release.py -v) "s3://github-artifacts-zeebrow/drcat/releases/binary-linux-amd64/$(./release.py -v)"
+        aws s3 cp ./build/drcat-$(./release.py -v).md5 "s3://github-artifacts-zeebrow/drcat/releases/binary-linux-amd64/$(./release.py -v)"
 
