@@ -40,7 +40,7 @@ jobs:
       run: |
         ls .git
         git fetch --all
-        git branch --list
+        git branch -a
         ./release.py -v
         make clean 
         make package-release-deb
