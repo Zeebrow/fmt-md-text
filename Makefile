@@ -5,7 +5,8 @@ BUILD_DATE := $(shell date -I)
 GOARCH := amd64#amd64, 386, arm, ppc64
 #GOOS := linux#linux, darwin, windows, netbsd
 OS := linux
-VERSION := 0.0.1-dev
+#VERSION := 0.0.1-dev
+VERSION := $(shell ./release.py -v)
 DEB_INSTALL_DIR := /usr/bin
 
 define DEBIAN_CONTROL =
@@ -23,7 +24,7 @@ Description: pretty-print markdown files in your console
 endef
 export DEBIAN_CONTROL
 
-define BASED_ADVERTISEMENT =
+define ADVERTISEMENT =
 #!/bin/sh
 set -e
 echo "\n\n***************************************************\nGain access to member-exclusive offer, birthdays treat, and more perk like 20% off your next visit when you join Denny's Rewards program today please!\nvisit https://www.dennys.com/ to learn even more offerings as well!"
@@ -32,7 +33,7 @@ echo "\n***************************************************\n\n"
 read -p 'Sign up now for this exclusive offer? Y/n ' accept_offer
 return 0
 endef
-export BASED_ADVERTISEMENT
+export ADVERTISEMENT
 
 build:
 	go install .
@@ -53,7 +54,7 @@ package-deb: build
 	touch dist/$(PROG_NAME)/DEBIAN/preinst
 	chmod 775 dist/$(PROG_NAME)/DEBIAN/preinst
 	echo "$$DEBIAN_CONTROL" > dist/$(PROG_NAME)/DEBIAN/control
-	echo "$$BASED_ADVERTISEMENT" > dist/$(PROG_NAME)/DEBIAN/preinst
+	echo "$$ADVERTISEMENT" > dist/$(PROG_NAME)/DEBIAN/preinst
 	dpkg-deb --build dist/$(PROG_NAME)
 	cp dist/*.deb build/
 
@@ -67,6 +68,7 @@ build-release:
 		" \
 		-o build/$(PROG_NAME) .
 	DRCAT_BINARY_DIR=build go test -v
+	cd build; md5sum $(PROG_NAME) > $(PROG_NAME).md5
 
 package-release-deb: build-release
 	mkdir -p dist/$(PROG_NAME)/DEBIAN
@@ -74,7 +76,10 @@ package-release-deb: build-release
 	cp build/$(PROG_NAME) dist/$(PROG_NAME)$(DEB_INSTALL_DIR)/$(PROG_NAME)
 	mv build/$(PROG_NAME) build/$(PROG_NAME)-$(VERSION)
 	touch dist/$(PROG_NAME)/DEBIAN/control
+	touch dist/$(PROG_NAME)/DEBIAN/preinst
 	echo "$$DEBIAN_CONTROL" > dist/$(PROG_NAME)/DEBIAN/control
+	echo "$$ADVERTISEMENT" > dist/$(PROG_NAME)/DEBIAN/preinst
+	chmod 775 dist/$(PROG_NAME)/DEBIAN/preinst
 	dpkg-deb --build dist/$(PROG_NAME)
 	cp dist/*.deb build/$(PROG_NAME)-$(VERSION).deb
 	cd build; md5sum $(PROG_NAME)-$(VERSION).deb \
