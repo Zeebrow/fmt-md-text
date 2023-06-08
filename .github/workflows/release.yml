@@ -14,7 +14,7 @@ env:
   AWS_S3_UPLOAD_ROLE_ARN: arn:aws:iam::${{ secrets.AWS_ACCOUNT }}:role/ghactions-drcat-s3-upload
 
 jobs:
-  build-linux-amd64:
+  release-linux-amd64:
     strategy:
       matrix:
         go-version: ["1.17", "1.18", "1.19"]
@@ -51,4 +51,4 @@ jobs:
         echo 'github.env'
         echo ${{ github.env }}
         echo 'toJson(github.event)'
-        echo ${{ toJson(github.event) }}
+        echo '${{ toJson(github.event) }}'
