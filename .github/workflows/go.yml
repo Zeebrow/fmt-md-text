@@ -23,10 +23,6 @@ jobs:
     - uses: actions/checkout@v3
       with:
         fetch-depth: 0
-      run: |
-        ./release.py -v
-        ls .git
-        git branch --list
 
     - name: Set up Go
       uses: actions/setup-go@v4
@@ -42,6 +38,7 @@ jobs:
 
     - name: Build and install debian
       run: |
+        ./release.py -v
         make clean 
         make package-release-deb
         yes | sudo apt install ./build/*.deb 
