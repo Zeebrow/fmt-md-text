@@ -22,25 +22,32 @@ jobs:
       contents: read
     steps:
     - uses: actions/checkout@v3
+
     - name: Set up Go
       uses: actions/setup-go@v4
       with:
         go-version: ${{ matrix.go-version }}
+
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v2
       with:
         aws-region: ${{ env.AWS_S3_UPLOAD_REGION }}
         role-to-assume: ${{ env.AWS_S3_UPLOAD_ROLE_ARN }}
         role-session-name: ${{ env.AWS_S3_UPLOAD_SESSION }}
+
     - name: Build
       run : make package-release-deb
+
     - name: Install debian
       run: |
         make clean 
         make package-deb 
-        sudo apt install ./build/*.deb 
+        yes| udo apt install ./build/*.deb 
         drcat -version
-        yes | sudo apt -y remove ${{ env.PROG_NAME }}
+
+    - name: Ensure uninstallable
+      run: sudo apt -y remove ${{ env.PROG_NAME }}
+
     - name: Upload
       run: |
         aws s3 cp ./build/*.deb "s3://github-artifacts-zeebrow/drcat/latest-dev/debian/amd64/"
