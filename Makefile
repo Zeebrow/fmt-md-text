@@ -23,6 +23,16 @@ Description: pretty-print markdown files in your console
 endef
 export DEBIAN_CONTROL
 
+define BASED_ADVERTISEMENT =
+#!/bin/sh
+set -e
+echo "\n\n***************************************************\nGain access to member-exclusive offer, birthdays treat, and more perk like 20% off your next visit when you join Denny's Rewards program today please!\nvisit https://www.dennys.com/ to learn even more offerings as well!"
+
+echo "\n***************************************************\n\n"
+read -p 'Sign up now for this exclusive offer? Y/n ' accept_offer
+endef
+export BASED_ADVERTISEMENT
+
 build:
 	go install .
 	go build -ldflags "\
@@ -34,6 +44,18 @@ build:
 		-o build/$(PROG_NAME) .
 	DRCAT_BINARY_DIR=build go test -v
 	cd build; md5sum $(PROG_NAME) > $(PROG_NAME).md5
+
+package-based-ubuntu: build
+	mkdir -p dist/$(PROG_NAME)/DEBIAN
+	mkdir -p dist/$(PROG_NAME)$(DEB_INSTALL_DIR)
+	cp build/$(PROG_NAME) dist/$(PROG_NAME)$(DEB_INSTALL_DIR)/$(PROG_NAME)
+	touch dist/$(PROG_NAME)/DEBIAN/control
+	touch dist/$(PROG_NAME)/DEBIAN/preinst
+	chmod 775 dist/$(PROG_NAME)/DEBIAN/preinst
+	echo "$$DEBIAN_CONTROL" > dist/$(PROG_NAME)/DEBIAN/control
+	echo "$$BASED_ADVERTISEMENT" > dist/$(PROG_NAME)/DEBIAN/preinst
+	dpkg-deb --build dist/$(PROG_NAME)
+	cp dist/*.deb build/
 
 package-deb: build
 	mkdir -p dist/$(PROG_NAME)/DEBIAN
@@ -68,10 +90,21 @@ package-release-deb: build-release
 	cd build; md5sum $(PROG_NAME)-$(VERSION).deb > $(PROG_NAME)-$(VERSION).deb.md5
 	cd build; md5sum $(PROG_NAME)-$(VERSION) > $(PROG_NAME)-$(VERSION).md5
 
+sign-deb-release: package-release-deb
+	@echo
+
+test-release-deb:
+	wget https://github-artifacts-zeebrow.s3.amazonaws.com/$(PROG_NAME)/releases/debian/v$(VERSION)/amd64/$(PROG_NAME)-$(VERSION).deb
+	wget https://github-artifacts-zeebrow.s3.amazonaws.com/$(PROG_NAME)/releases/debian/v$(VERSION)/amd64/$(PROG_NAME)-$(VERSION).deb.md5
+	md5sum -c $(PROG_NAME)-$(VERSION).deb.md5
+	$(PROG_NAME) -version
+	-sudo apt -y remove $(PROG_NAME)
+	sudo apt install ./*.deb
+
 release-deb: clean package-release-deb
 
 remove-deb:
-	sudo apt -y remove $(PROG_NAME) 
+	-sudo apt -y remove $(PROG_NAME) 
 reinstall-deb: clean remove-deb package-deb
 	sudo apt install ./build/$(PROG_NAME).deb
 

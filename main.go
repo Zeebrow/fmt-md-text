@@ -1,5 +1,22 @@
-//usr/bin/env go run "$0" "$@";
-//above is for lulz
+/*
+Copyright (C) <year>  <name of author>
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
+// usr/bin/env go run "$0" "$@";
+// above is about equal to a bash shebang
 // you can ./main.go -f example.md and its kinda close enough
 package main
 
@@ -42,7 +59,7 @@ const ERR_RTFM = 42
 
 var mdtext []string
 
-//func pprint(md string, lightMode *bool) {
+// func pprint(md string, lightMode *bool) {
 func pprint(f *os.File, lightMode *bool) {
 	var mode = "dark"
 	if *lightMode {
