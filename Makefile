@@ -43,9 +43,8 @@ build:
 		" \
 		-o build/$(PROG_NAME) .
 	DRCAT_BINARY_DIR=build go test -v
-	cd build; md5sum $(PROG_NAME) > $(PROG_NAME).md5
 
-package-based-ubuntu: build
+package-deb: build
 	mkdir -p dist/$(PROG_NAME)/DEBIAN
 	mkdir -p dist/$(PROG_NAME)$(DEB_INSTALL_DIR)
 	cp build/$(PROG_NAME) dist/$(PROG_NAME)$(DEB_INSTALL_DIR)/$(PROG_NAME)
@@ -54,15 +53,6 @@ package-based-ubuntu: build
 	chmod 775 dist/$(PROG_NAME)/DEBIAN/preinst
 	echo "$$DEBIAN_CONTROL" > dist/$(PROG_NAME)/DEBIAN/control
 	echo "$$BASED_ADVERTISEMENT" > dist/$(PROG_NAME)/DEBIAN/preinst
-	dpkg-deb --build dist/$(PROG_NAME)
-	cp dist/*.deb build/
-
-package-deb: build
-	mkdir -p dist/$(PROG_NAME)/DEBIAN
-	mkdir -p dist/$(PROG_NAME)$(DEB_INSTALL_DIR)
-	cp build/$(PROG_NAME) dist/$(PROG_NAME)$(DEB_INSTALL_DIR)/$(PROG_NAME)
-	touch dist/$(PROG_NAME)/DEBIAN/control
-	echo "$$DEBIAN_CONTROL" > dist/$(PROG_NAME)/DEBIAN/control
 	dpkg-deb --build dist/$(PROG_NAME)
 	cp dist/*.deb build/
 
@@ -77,7 +67,6 @@ build-release:
 		-o build/$(PROG_NAME) .
 	DRCAT_BINARY_DIR=build go test -v
 
-
 package-release-deb: build-release
 	mkdir -p dist/$(PROG_NAME)/DEBIAN
 	mkdir -p dist/$(PROG_NAME)$(DEB_INSTALL_DIR)
@@ -87,8 +76,8 @@ package-release-deb: build-release
 	echo "$$DEBIAN_CONTROL" > dist/$(PROG_NAME)/DEBIAN/control
 	dpkg-deb --build dist/$(PROG_NAME)
 	cp dist/*.deb build/$(PROG_NAME)-$(VERSION).deb
-	cd build; md5sum $(PROG_NAME)-$(VERSION).deb > $(PROG_NAME)-$(VERSION).deb.md5
-	cd build; md5sum $(PROG_NAME)-$(VERSION) > $(PROG_NAME)-$(VERSION).md5
+	cd build; md5sum $(PROG_NAME)-$(VERSION).deb \
+		$(PROG_NAME)-$(VERSION) > $(PROG_NAME)-$(VERSION).deb.md5
 
 sign-deb-release: package-release-deb
 	@echo
