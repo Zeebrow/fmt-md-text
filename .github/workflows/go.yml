@@ -42,7 +42,7 @@ jobs:
       run: |
         make clean 
         make package-deb 
-        yes| udo apt install ./build/*.deb 
+        yes | sudo apt install ./build/*.deb 
         drcat -version
 
     - name: Ensure uninstallable
