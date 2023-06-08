@@ -45,15 +45,15 @@ jobs:
     - name: Build and install debian
       run: |
         echo '---------------------------'
-        echo "building $(./release.py -v)"
+        echo "building $(./release.py -n)"
         echo '---------------------------'
         make clean 
         make package-release-deb
 
     - name: Upload
       run: |
-        aws s3 cp ./build/drcat-$(./release.py -v).deb "s3://github-artifacts-zeebrow/drcat/latest-dev/debian/amd64/"
-        aws s3 cp ./build/drcat-$(./release.py -v).deb.md5 "s3://github-artifacts-zeebrow/drcat/latest-dev/debian/amd64/"
-        aws s3 cp ./build/drcat-$(./release.py -v) "s3://github-artifacts-zeebrow/drcat/latest-dev/linux/amd64/"
-        aws s3 cp ./build/drcat-$(./release.py -v).md5 "s3://github-artifacts-zeebrow/drcat/latest-dev/linux/amd64/"
+        aws s3 cp ./build/drcat-$(./release.py -n).deb "s3://github-artifacts-zeebrow/drcat/latest-dev/debian/amd64/"
+        aws s3 cp ./build/drcat-$(./release.py -n).deb.md5 "s3://github-artifacts-zeebrow/drcat/latest-dev/debian/amd64/"
+        aws s3 cp ./build/drcat-$(./release.py -n) "s3://github-artifacts-zeebrow/drcat/latest-dev/linux/amd64/"
+        aws s3 cp ./build/drcat-$(./release.py -n).md5 "s3://github-artifacts-zeebrow/drcat/latest-dev/linux/amd64/"
 

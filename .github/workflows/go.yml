@@ -40,7 +40,7 @@ jobs:
     - name: Build and install debian
       run: |
         echo '---------------------------'
-        echo "building $(./release.py -v)"
+        echo "building $(./release.py -n)"
         echo '---------------------------'
         make clean 
         make package-release-deb
@@ -52,7 +52,7 @@ jobs:
 
     - name: debug
       run: |
-        ./release.py -v
+        ./release.py -n
         echo 'github.ref'
         echo ${{ github.ref }}
         echo 'github.ref_name'
