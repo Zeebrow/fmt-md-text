@@ -68,6 +68,7 @@ build-release:
 		" \
 		-o build/$(PROG_NAME) .
 	DRCAT_BINARY_DIR=build go test -v
+	cd build; md5sum $(PROG_NAME) > $(PROG_NAME)-$(VERSION).md5
 
 package-release-deb: build-release
 	mkdir -p dist/$(PROG_NAME)/DEBIAN
@@ -83,8 +84,7 @@ package-release-deb: build-release
 	cp dist/*.deb build/$(PROG_NAME)-$(VERSION).deb
 	# raw binary should have version attached to it
 	mv build/$(PROG_NAME) build/$(PROG_NAME)-$(VERSION)
-	cd build; md5sum $(PROG_NAME)-$(VERSION).deb \
-		$(PROG_NAME)-$(VERSION) > MD5SUMS
+	cd build; md5sum $(PROG_NAME)-$(VERSION).deb > $(PROG_NAME)-$(VERSION).deb.md5
 
 sign-deb-release: package-release-deb
 	@echo
