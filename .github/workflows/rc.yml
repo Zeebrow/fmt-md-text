@@ -1,9 +1,10 @@
 # #############
 # same as go.yml but uploads artifacts
+# note there is not such thing as "on merge"
 name: release
 
 on:
-  merge:
+  pull_request:
     branches:
       - 'rc/*'
 
