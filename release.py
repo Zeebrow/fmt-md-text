@@ -121,18 +121,20 @@ def get_remote_release_branches():
     return rtn
 
 
-def get_version(_next: bool) -> str:
+def get_version(rc: bool) -> str:
     """
     Determines the correct version number from listing remote branches.
+    If rc is True, a release-candidate version is returned
+    If rc is False, a release version is returned
+
     Runs `git fetch --prune` and `git fetch --all`
     """
     subprocess.run("git fetch --prune".split())
     branches = get_remote_release_branches()
     current_branch = subprocess.run("git branch --show-current".split(), capture_output=True, encoding='utf-8').stdout
     latest = max(branches)
-    if _next:
-        latest.bump_patch()
-        return latest.__repr__().split('/')[1] + "-dev"
+    if rc:
+        return latest.__repr__().split('/')[1] + "-rc"
     return latest.__repr__().split('/')[1]
 
 
