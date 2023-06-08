@@ -68,13 +68,12 @@ build-release:
 		" \
 		-o build/$(PROG_NAME) .
 	DRCAT_BINARY_DIR=build go test -v
-	cd build; md5sum $(PROG_NAME) > $(PROG_NAME).md5
 
 package-release-deb: build-release
 	mkdir -p dist/$(PROG_NAME)/DEBIAN
 	mkdir -p dist/$(PROG_NAME)$(DEB_INSTALL_DIR)
+	# let dpkg take care of versioning
 	cp build/$(PROG_NAME) dist/$(PROG_NAME)$(DEB_INSTALL_DIR)/$(PROG_NAME)
-	mv build/$(PROG_NAME) build/$(PROG_NAME)-$(VERSION)
 	touch dist/$(PROG_NAME)/DEBIAN/control
 	touch dist/$(PROG_NAME)/DEBIAN/preinst
 	echo "$$DEBIAN_CONTROL" > dist/$(PROG_NAME)/DEBIAN/control
@@ -82,8 +81,10 @@ package-release-deb: build-release
 	chmod 775 dist/$(PROG_NAME)/DEBIAN/preinst
 	dpkg-deb --build dist/$(PROG_NAME)
 	cp dist/*.deb build/$(PROG_NAME)-$(VERSION).deb
+	# raw binary should have version attached to it
+	mv build/$(PROG_NAME) build/$(PROG_NAME)-$(VERSION)
 	cd build; md5sum $(PROG_NAME)-$(VERSION).deb \
-		$(PROG_NAME)-$(VERSION) > $(PROG_NAME)-$(VERSION).deb.md5
+		$(PROG_NAME)-$(VERSION) > MD5SUMS
 
 sign-deb-release: package-release-deb
 	@echo
