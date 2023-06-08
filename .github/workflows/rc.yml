@@ -16,7 +16,7 @@ env:
   AWS_S3_UPLOAD_ROLE_ARN: arn:aws:iam::${{ secrets.AWS_ACCOUNT }}:role/ghactions-drcat-s3-upload
 
 jobs:
-  release-linux-amd64:
+  rc-linux-amd64:
     strategy:
       matrix:
         # should only be latest
