@@ -3,7 +3,7 @@ name: Go
 on:
   push:
     branches:
-      - master
+      - 'feature/**'
 
 env:
   AWS_S3_UPLOAD_SESSION: gh-action-session-drcat

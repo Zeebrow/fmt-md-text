@@ -3,7 +3,7 @@ name: release
 on:
   push:
     branches:
-      - 'release/**'
+      - master
 env:
   PROG_NAME: drcat
   AWS_S3_UPLOAD_SESSION: gh-action-session-drcat

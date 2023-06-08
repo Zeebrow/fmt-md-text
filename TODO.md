@@ -1,0 +1,3 @@
+- figure out how to set the version for your program (AND WRITE IT DOWN)
+- fix gpgsign
+- commit and release new version for glamour 0.5.0
