@@ -1,10 +1,12 @@
-name: Go
+# #############
+# same as go.yml but uploads artifacts
+# note there is not such thing as "on merge"
+name: release
 
 on:
-  push:
+  pull_request:
     branches:
-      - 'feature/**'
-      - 'fix*/**'
+      - 'rc/*'
 
 env:
   AWS_S3_UPLOAD_SESSION: gh-action-session-drcat
@@ -12,7 +14,7 @@ env:
   AWS_S3_UPLOAD_ROLE_ARN: arn:aws:iam::${{ secrets.AWS_ACCOUNT }}:role/ghactions-drcat-s3-upload
 
 jobs:
-  build-linux-amd64:
+  release-linux-amd64:
     strategy:
       matrix:
         go-version: ["1.17", "1.18", "1.19"]
@@ -50,18 +52,12 @@ jobs:
     - name: Ensure uninstallable
       run: sudo apt-get -y remove ${{ env.PROG_NAME }}
 
-    - name: debug
+    - name: Upload
       run: |
-        ./release.py -v
-        echo 'github.ref'
-        echo ${{ github.ref }}
-        echo 'github.ref_name'
-        echo ${{ github.ref_name }}
-        echo 'github.head_ref : source branch of pr'
-        echo ${{ github.head_ref }}
-        echo 'github.base_ref : target branch of pr'
-        echo ${{ github.base_ref }}
-        echo 'github.env'
-        echo ${{ github.env }}
-        echo 'toJson(github.event)'
-        echo '${{ toJson(github.event) }}'
+        ls build/
+        ls dist/
+        aws s3 cp ./build/drcat-$(./release.py -v).deb "s3://github-artifacts-zeebrow/drcat/latest-dev/debian/amd64/"
+        aws s3 cp ./build/drcat-$(./release.py -v).deb.md5 "s3://github-artifacts-zeebrow/drcat/latest-dev/debian/amd64/"
+        aws s3 cp ./build/drcat-$(./release.py -v) "s3://github-artifacts-zeebrow/drcat/latest-dev/linux/amd64/"
+        aws s3 cp ./build/drcat-$(./release.py -v).md5 "s3://github-artifacts-zeebrow/drcat/latest-dev/linux/amd64/"
+
