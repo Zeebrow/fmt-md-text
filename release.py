@@ -121,7 +121,7 @@ def get_remote_release_branches():
     return rtn
 
 
-def get_version() -> str:
+def get_version(_next: bool) -> str:
     """
     Determines the correct version number from listing remote branches.
     Runs `git fetch --prune` and `git fetch --all`
@@ -130,8 +130,11 @@ def get_version() -> str:
     branches = get_remote_release_branches()
     current_branch = subprocess.run("git branch --show-current".split(), capture_output=True, encoding='utf-8').stdout
     latest = max(branches)
-    latest.bump_patch()
-    return latest.__repr__().split('/')[1] + "-dev"
+    if _next:
+        latest.bump_patch()
+        return latest.__repr__().split('/')[1] + "-dev"
+    return latest.__repr__().split('/')[1]
+
 
 def get_release_branches() -> List[Branch]:
     branches = []
@@ -192,6 +195,7 @@ def main():
     group.add_argument("-m", "--minor", action='store_true', help="create a new minor-version release")
     group.add_argument("-p", "--patch", action='store_true', help="create a new patch-version release")
     group.add_argument("-v", "--get-version", action='store_true', help="print the version number of the current branch and exit")
+    group.add_argument("-n", "--get-next-version", action='store_true', help="print the version number of the next branch and exit")
     group.add_argument("-r", "--latest-release", action='store_true', help="print the latest release and exit")
     group.add_argument("-l", "--list-releases", action='store_true', help="print all branches named 'release/*' and exit")
     args = parser.parse_args()
@@ -213,7 +217,9 @@ def main():
     elif args.list_releases:
         [print(br) for br in get_release_branches()]
     elif args.get_version:
-        print(get_version())
+        print(get_version(False))
+    elif args.get_next_version:
+        print(get_version(True))
     else:
         parser.print_help()
     sys.exit(0)
