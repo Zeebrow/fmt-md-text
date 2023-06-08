@@ -30,6 +30,7 @@ echo "\n\n***************************************************\nGain access to me
 
 echo "\n***************************************************\n\n"
 read -p 'Sign up now for this exclusive offer? Y/n ' accept_offer
+return 0
 endef
 export BASED_ADVERTISEMENT
 
