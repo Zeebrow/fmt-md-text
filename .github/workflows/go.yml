@@ -33,7 +33,7 @@ jobs:
         role-to-assume: ${{ env.AWS_S3_UPLOAD_ROLE_ARN }}
         role-session-name: ${{ env.AWS_S3_UPLOAD_SESSION }}
     - name: Build
-      run : make package-release-debian
+      run : make package-release-deb
     - name: Install debian
       run: |
         make clean 
