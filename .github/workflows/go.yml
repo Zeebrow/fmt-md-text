@@ -6,7 +6,6 @@ on:
       - master
 
 env:
-  PROG_NAME: drcat
   AWS_S3_UPLOAD_SESSION: gh-action-session-drcat
   AWS_S3_UPLOAD_REGION: us-east-1
   AWS_S3_UPLOAD_ROLE_ARN: arn:aws:iam::${{ secrets.AWS_ACCOUNT }}:role/ghactions-drcat-s3-upload
@@ -45,11 +44,11 @@ jobs:
     - name: Ensure uninstallable
       run: sudo apt -y remove ${{ env.PROG_NAME }}
 
-    - name: Upload
+    - name: Upload .deb
       run: |
         ls build/
         ls dist/
         aws s3 cp ./build/*.deb "s3://github-artifacts-zeebrow/drcat/latest-dev/debian/amd64/"
         aws s3 cp ./build/*.deb.md5 "s3://github-artifacts-zeebrow/drcat/latest-dev/debian/amd64/"
-        aws s3 cp "./build/${{ env.PROG_NAME }}" "s3://github-artifacts-zeebrow/drcat/latest-dev/linux/amd64/"
+        aws s3 cp ./build/drcat-$(./release.py -v) "s3://github-artifacts-zeebrow/drcat/latest-dev/linux/amd64/"
         aws s3 cp "./build/${{ env.PROG_NAME }}.md5" "s3://github-artifacts-zeebrow/drcat/latest-dev/linux/amd64/"

@@ -67,6 +67,9 @@ class Branch:
         subprocess.run(f"git checkout master".split())
         #end Branch().create()
 
+    def bump_patch(self):
+        self.patch = self.patch + 1
+
     def __repr__(self):
         return f"{self.branch_type}/{self.major}.{self.minor}.{self.patch}"
 
@@ -112,9 +115,11 @@ def get_version() -> str:
     branch = subprocess.run("git branch --show-current".split(),
             capture_output=True, encoding='utf-8')
     if not branch.stdout.startswith("release"):
-        print(f"You are not on a release branch! ({branch.stdout.strip()})")
-        sys.exit(1)
-    return branch.stdout.strip().split("/")[1]
+        next_release = get_latest()
+        next_release.bump_patch()
+        return next_release.__repr__().split('/')[1] + "-dev"
+    else:
+        return branch.stdout.strip().split("/")[1]
 
 def get_release_branches() -> List[Branch]:
     branches = []
