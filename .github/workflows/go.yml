@@ -40,7 +40,7 @@ jobs:
         make package-deb 
         sudo apt install ./build/*.deb 
         drcat -version
-        sudo apt -y remove ${{ env.PROG_NAME }}
+        yes | sudo apt -y remove ${{ env.PROG_NAME }}
     - name: Upload
       run: |
         aws s3 cp ./build/*.deb "s3://github-artifacts-zeebrow/drcat/latest-dev/debian/amd64/"
