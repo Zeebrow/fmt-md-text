@@ -3,7 +3,7 @@
 # We're only distributing what is built with the latest version of go
 # This will be run on every commit to a branch with an open pull request to a
 # release candidate branch, and uploaded to s3 drcat/latest-dev
-name: release
+name: release candidate
 
 on:
   pull_request:
