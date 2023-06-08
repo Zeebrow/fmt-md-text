@@ -9,6 +9,7 @@ import sys
 class Branch:
     def __init__(self, name):
         self.name = name.strip()
+
         self.branch_type = self.name.split("/")[0]
         self.version = self.name.split("/")[1]
         self.major = int(self.version.split(".")[0])
@@ -111,15 +112,26 @@ class Branch:
         else:
             return self.__lt__(other)
 
+def get_remote_release_branches():
+    branches = subprocess.run("git branch --remote".split(), capture_output=True, encoding='utf-8').stdout.split()
+    rtn = []
+    for b in branches:
+        if b.startswith('origin/release'):
+            rtn.append(Branch(b.split('origin/')[1]))
+    return rtn
+
+
 def get_version() -> str:
-    branch = subprocess.run("git branch --show-current".split(),
-            capture_output=True, encoding='utf-8')
-    if not branch.stdout.startswith("release"):
-        next_release = get_latest()
-        next_release.bump_patch()
-        return next_release.__repr__().split('/')[1] + "-dev"
-    else:
-        return branch.stdout.strip().split("/")[1]
+    """
+    Determines the correct version number from listing remote branches.
+    Runs `git fetch --prune` and `git fetch --all`
+    """
+    subprocess.run("git fetch --prune".split())
+    branches = get_remote_release_branches()
+    current_branch = subprocess.run("git branch --show-current".split(), capture_output=True, encoding='utf-8').stdout
+    latest = max(branches)
+    latest.bump_patch()
+    return latest.__repr__().split('/')[1] + "-dev"
 
 def get_release_branches() -> List[Branch]:
     branches = []
